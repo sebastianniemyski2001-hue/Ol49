@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111a1b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <meta name="description" content="OL49: Linia Próbna — przeglądarkowy prototyp symulatora parowozu z obsługą kotła, hamulców i stacji.">
+  <title>OL49 — Linia Próbna | Symulator parowozu</title>
+  <style>
+:root{--bg:#0d1416;--panel:#162124;--panel2:#1b292b;--border:#344243;--cream:#f1e8d3;--muted:#9caeab;--copper:#d7a46e;--green:#86bd98;--red:#db796b;--shadow:0 12px 40px rgba(0,0,0,.16)}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--cream);background:radial-gradient(ellipse at 50% -200px,#233435 0%,#0d1416 60%);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}button:focus-visible,input:focus-visible{outline:2px solid #e8bb81;outline-offset:3px}.app{max-width:1300px;margin:auto;padding:20px clamp(12px,3vw,32px) 22px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:15px}.brand-mark{font-family:Georgia,serif;font-size:35px;letter-spacing:-3px;font-weight:900;color:var(--cream);line-height:1}.brand-mark span{color:var(--copper)}h1,h2,p{margin:0}.brand h1{font-size:17px;letter-spacing:.22em;font-weight:750}.brand p{font-size:9px;color:var(--muted);letter-spacing:.17em;margin-top:5px}.header-actions{display:flex;gap:7px}.mini{border:1px solid #556463;background:#283537;color:var(--cream);padding:9px 13px;border-radius:8px;font-size:12px;font-weight:700}.mini.subtle{background:transparent;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:13px}.stat{background:linear-gradient(155deg,#223032,#182225);border:1px solid var(--border);padding:12px 15px 11px;border-radius:11px;min-width:0}.stat-label{color:#acbab6;font-size:10px;letter-spacing:.12em;font-weight:700}.stat>div:nth-child(2){display:flex;align-items:baseline;gap:5px;margin:5px 0 8px}.stat strong{font-size:clamp(22px,3vw,31px);font-variant-numeric:tabular-nums;letter-spacing:-.05em}.stat small{font-size:12px;color:var(--muted)}.meter{height:4px;background:#3c4b4b;border-radius:5px;overflow:hidden}.meter i{display:block;width:50%;height:100%;border-radius:5px;background:var(--copper);transition:width .2s}.scene-panel{position:relative;border-radius:14px;overflow:hidden;border:1px solid #4b5550;box-shadow:var(--shadow);background:#8da6a6}.scene-panel canvas{display:block;width:100%;height:auto;aspect-ratio:1200/520;min-height:200px;max-height:470px;object-fit:fill}.scene-toolbar{position:absolute;z-index:2;left:12px;right:12px;top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}.scene-tag{display:flex;align-items:center;gap:8px;background:rgba(12,24,24,.85);backdrop-filter:blur(8px);padding:10px 12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#e6e8db;font-size:10px;font-weight:800;letter-spacing:.1em}.dot{width:7px;height:7px;background:#9aca9a;border-radius:50%;box-shadow:0 0 8px #9aca9a}.view-switch{display:flex;gap:3px;background:rgba(12,24,24,.88);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px;pointer-events:auto}.view-switch button{border:0;border-radius:5px;color:#c6cfca;background:transparent;padding:7px 12px;font-size:11px;font-weight:700}.view-switch button.active{color:#192323;background:#e4d4b7}.scene-bottom{position:absolute;bottom:0;left:0;right:0;padding:28px 18px 12px;background:linear-gradient(transparent,rgba(7,18,17,.8));display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:750;letter-spacing:.12em;color:#f4f1e5}.route{background:#182427;border:1px solid var(--border);border-radius:11px;padding:17px 20px 15px;margin-top:12px}.route-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.eyebrow{color:var(--copper);font-size:10px;font-weight:800;letter-spacing:.15em}.route h2{font-size:17px;margin:4px 0}.route p{font-size:12px;color:var(--muted);line-height:1.5;max-width:750px}.distance{min-width:100px;text-align:right}.distance strong{display:block;font-size:24px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.distance small{display:block;color:var(--muted);font-size:10px}.route-track{position:relative;height:4px;background:#566260;border-radius:5px;margin:25px 8px 11px}.station-point{position:absolute;width:13px;height:13px;border-radius:50%;border:3px solid #9ea9a3;background:#243133;top:50%;transform:translate(-50%,-50%);z-index:1}.station-point.done{background:#a7d3a8;border-color:#a7d3a8}.station-point.first{left:0}.station-point.middle{left:50%}.station-point.last{left:100%}.train-marker{position:absolute;left:0;top:50%;transform:translate(-50%,-50%);background:var(--copper);width:20px;height:20px;border:3px solid #162124;border-radius:5px;z-index:2;box-shadow:0 0 0 2px var(--copper);transition:left .2s}.route-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:10px}.dashboard{display:grid;grid-template-columns:1.25fr 1fr;gap:12px;margin-top:12px}.controls,.service{border:1px solid var(--border);background:#172225;border-radius:12px;padding:19px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:18px}.section-title h2{font-size:16px}.section-title span{font-size:10px;color:var(--copper);font-weight:800;letter-spacing:.08em}.slider-grid{display:grid;gap:20px}.control{display:block}.control-heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:7px;font-size:13px}.control-heading strong{color:#e3b985;font-variant-numeric:tabular-nums}.control input{display:block;width:100%;height:24px;margin:0;accent-color:#d7a46e;cursor:pointer;touch-action:pan-y}.endpoints{display:flex;justify-content:space-between;font-size:10px;color:#81938f;margin-top:3px}.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.action{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #485b57;border-radius:9px;padding:14px 10px;color:#f2e9d5;background:#233233;min-height:72px;transition:background .12s}.action:hover{background:#2e4141}.action.primary{background:#42372c;border-color:#856748}.action.on{background:#244f43;border-color:#74b19a}.action:disabled{opacity:.45;cursor:not-allowed}.action-symbol{font-size:25px;min-width:26px;text-align:center;color:#d7b184}.action strong{font-size:12px;display:block}.action small{display:block;font-size:10px;color:#aebbb2;margin-top:4px}.notice{margin-top:12px;background:#101b1d;border-left:3px solid #b99a6c;padding:12px;color:#cbd6ca;line-height:1.5;font-size:12px;min-height:60px}.notice.warning{border-color:#df8874;color:#f0c5b9}.notice.success{border-color:#85bf99;color:#c3e5c7}footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:16px 2px 0;color:#839590;font-size:10px;line-height:1.6}@media(max-width:850px){.dashboard{grid-template-columns:1fr}.stats{grid-template-columns:repeat(5,minmax(0,1fr))}.stat{padding:10px}.stat-label{font-size:8px}.stat strong{font-size:22px}.brand-mark{font-size:29px}}@media(max-width:520px){.app{padding:12px 9px 18px}.topbar{margin-bottom:12px}.brand{gap:8px}.brand h1{font-size:13px;letter-spacing:.1em}.brand p{font-size:8px;letter-spacing:.06em}.brand-mark{font-size:27px}.mini{font-size:10px;padding:8px}.stats{gap:5px}.stat{padding:8px 6px;border-radius:7px}.stat-label{font-size:7px;letter-spacing:0}.stat strong{font-size:19px}.stat small{font-size:9px}.stat>div:nth-child(2){gap:2px;margin:4px 0 7px}.scene-toolbar{top:7px;left:7px;right:7px}.scene-tag{padding:7px;font-size:8px;letter-spacing:0}.view-switch button{padding:6px 8px;font-size:9px}.scene-bottom{font-size:9px;padding:23px 9px 8px}.route{padding:13px 12px}.route h2{font-size:15px}.route p{font-size:11px}.distance strong{font-size:21px}.distance small{font-size:9px}.route-labels{font-size:9px}.controls,.service{padding:14px}.action{min-height:70px;padding:10px 7px;gap:6px}.action strong{font-size:11px}.action small{font-size:9px}.action-symbol{font-size:21px;min-width:22px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Czytelniejsze wskaźniki na wąskich ekranach iPhone'a */
+@media(max-width:520px){.stats{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.stat{grid-column:span 2;padding:9px 10px}.stat:nth-child(n+4){grid-column:span 3}.stat-label{font-size:9px;letter-spacing:.04em}.stat strong{font-size:23px}.stat small{font-size:11px}.stat>div:nth-child(2){margin:5px 0 8px}}
+
+/* 0.3 — dodatkowe przyciski i instrukcja mobilna */
+.header-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.header-actions button{min-height:40px;min-width:68px}
+.help-panel{margin:16px 0 8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.help-panel summary{padding:16px 18px;cursor:pointer;color:var(--cream);font-weight:650;min-height:48px;touch-action:manipulation}
+.help-content{padding:0 18px 16px;color:var(--muted);font-size:14px;line-height:1.55}
+.help-content b{color:var(--cream)}
+.help-content p{margin:11px 0}
+@media(max-width:520px){.topbar{align-items:flex-start;gap:10px}.header-actions{max-width:210px;gap:5px}.header-actions button{font-size:11px;padding:8px 7px;min-width:75px}.action-grid{gap:8px}.action{min-height:66px}.scene-toolbar{gap:6px}}
+/* HUD na dole sceny nie może przechwytywać stuknięć w palenisko. */
+.scene-bottom{pointer-events:none}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">OL<span>49</span></span><div><h1>LINIA PRÓBNA</h1><p>SYMULATOR MASZYNISTY · WERSJA 0.3</p></div></div>
+    <div class="header-actions"><button id="saveBtn" class="mini" type="button">Zapisz</button><button id="loadBtn" class="mini" type="button">Wczytaj</button><button id="pauseBtn" class="mini" type="button">Ⅱ Pauza</button><button id="resetBtn" class="mini subtle" type="button">↺ Od nowa</button></div>
+  </header>
+
+  <section class="stats" aria-label="Przyrządy lokomotywy">
+    <div class="stat"><span class="stat-label">PRĘDKOŚĆ</span><div><strong id="speed">0</strong><small>km/h</small></div><div class="meter"><i id="speedFill"></i></div></div>
+    <div class="stat"><span class="stat-label">CIŚNIENIE KOTŁA</span><div><strong id="pressure">11,8</strong><small>bar</small></div><div class="meter"><i id="pressureFill"></i></div></div>
+    <div class="stat"><span class="stat-label">WODA W KOTLE</span><div><strong id="boilerWater">70</strong><small>%</small></div><div class="meter"><i id="boilerFill"></i></div></div>
+    <div class="stat"><span class="stat-label">ZAPAS WODY</span><div><strong id="tenderWater">80</strong><small>%</small></div><div class="meter"><i id="tenderFill"></i></div></div>
+    <div class="stat"><span class="stat-label">WĘGIEL</span><div><strong id="coal">85</strong><small>%</small></div><div class="meter"><i id="coalFill"></i></div></div>
+  </section>
+
+  <section class="scene-panel" aria-label="Wizualizacja jazdy">
+    <div class="scene-toolbar"><div class="scene-tag"><span class="dot"></span><span id="runState">POSTÓJ NA STACJI</span></div><div class="view-switch"><button id="exteriorBtn" class="active" type="button">Z zewnątrz</button><button id="cabBtn" type="button">Kabina</button></div></div>
+    <canvas id="scene" width="1200" height="520" role="img" aria-label="Animowana lokomotywa OL49 na linii kolejowej"></canvas>
+    <div class="scene-bottom"><span id="placeLabel">STACJA POCZĄTKOWA</span><span id="travelDistance">0 / 2 400 m</span></div>
+  </section>
+
+  <section class="route" aria-live="polite">
+    <div class="route-head"><div><span class="eyebrow">ZADANIE MASZYNISTY</span><h2 id="missionTitle">Dotrzyj do stacji Leśna</h2><p id="missionText">Zatrzymaj pociąg przy peronie, 1 200 m dalej. Najpierw zwolnij hamulec i otwórz regulator.</p></div><div class="distance"><strong id="nextDistance">1 200</strong><small>metrów do celu</small></div></div>
+    <div class="route-track"><span class="station-point first done"></span><span id="trainMarker" class="train-marker"></span><span class="station-point middle"></span><span class="station-point last"></span></div>
+    <div class="route-labels"><span>Początek</span><span>Leśna · 1,2 km</span><span>Końcowa · 2,4 km</span></div>
+  </section>
+
+  <main class="dashboard">
+    <section class="controls" aria-label="Sterowanie parowozem">
+      <div class="section-title"><h2>Nastawnik i hamulce</h2><span>STEROWANIE DOTYKOWE</span></div>
+      <div class="slider-grid">
+        <label class="control"><div class="control-heading"><span>Regulator pary</span><strong id="throttleVal">0%</strong></div><input id="throttle" type="range" min="0" max="100" step="1" value="0" aria-label="Regulator pary"><div class="endpoints"><span>Zamknięty</span><span>Otwarty</span></div></label>
+        <label class="control"><div class="control-heading"><span>Nawrotnik</span><strong id="reverserVal">+70%</strong></div><input id="reverser" type="range" min="-100" max="100" step="5" value="70" aria-label="Nawrotnik, kierunek i napełnienie cylindrów"><div class="endpoints"><span>Wstecz</span><span>Neutralny</span><span>Naprzód</span></div></label>
+        <label class="control"><div class="control-heading"><span>Hamulec</span><strong id="brakeVal">80%</strong></div><input id="brake" type="range" min="0" max="100" step="1" value="80" aria-label="Hamulec pociągu"><div class="endpoints"><span>Zwolniony</span><span>Zaciśnięty</span></div></label>
+      </div>
+    </section>
+    <section class="service" aria-label="Obsługa kotła i wyposażenia">
+      <div class="section-title"><h2>Kocioł i wyposażenie</h2><span id="fireStatus">ŻAR 65%</span></div>
+      <div class="action-grid"><button id="doorBtn" class="action" type="button" aria-pressed="false"><span class="action-symbol">▣</span><span><strong>Drzwiczki: ZAMKNIĘTE</strong><small>Otwórz przed dorzuceniem</small></span></button><button id="fireBtn" class="action primary" type="button"><span class="action-symbol">♨</span><span><strong>Dorzuć węgiel</strong><small>Podtrzymaj ogień</small></span></button><button id="injectorBtn" class="action" type="button" aria-pressed="false"><span class="action-symbol">◉</span><span><strong>Inżektor: WYŁ.</strong><small>Woda do kotła</small></span></button><button id="refillBtn" class="action" type="button"><span class="action-symbol">↟</span><span><strong>Nabierz wody</strong><small>Tylko na stacji</small></span></button><button id="whistleBtn" class="action" type="button"><span class="action-symbol">♫</span><span><strong>Gwizdek</strong><small>Sygnał dźwiękowy</small></span></button></div>
+      <div class="notice" id="notice" role="status" aria-live="polite">Gotowość do odjazdu. Zwolnij hamulec, ustaw nawrotnik i stopniowo otwieraj regulator. Węgiel dorzucisz po otwarciu drzwiczek.</div>
+    </section>
+  </main>
+  <details class="help-panel"><summary>Instrukcja pierwszej jazdy i obsługi kotła</summary><div class="help-content">
+    <p><b>Odjazd:</b> ustaw nawrotnik na +70%, zwolnij hamulec do 0%, otwórz regulator pary na 40–60%. Obserwuj prędkość i ciśnienie.</p>
+    <p><b>Palenisko:</b> otwórz drzwiczki, dorzuć węgiel i zamknij je ponownie. Drzwiczki można też dotknąć w widoku kabiny. Otwarte drzwiczki powodują większe straty ciepła.</p>
+    <p><b>Woda:</b> inżektor podaje wodę z tendra do kotła. Zapas wody w tendrze uzupełniasz na stacji podczas postoju.</p>
+    <p><b>Zadanie:</b> zatrzymaj się na stacji Leśna (1200 m), następnie na stacji Końcowa (2400 m). Użyj „Zapisz”, żeby wrócić do przejazdu później. Autozapis odbywa się również podczas jazdy.</p>
+    <p><b>iPhone:</b> uruchamiaj grę przez adres HTTPS w Safari; otwieranie lokalnych HTML przez Pliki może nie obsługiwać gry prawidłowo.</p>
+  </div></details>
+  <footer><span>OL49 · prototyp mechaniki, nie dokumentacja techniczna lokomotywy</span><span>Klawiatura: ↑ ↓ regulator · ← → hamulec · spacja gwizdek</span></footer>
+</div>
+<script>
+/* OL49 — Linia Próbna 0.3. Bez zewnętrznych bibliotek i zasobów. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const fmt = v => Math.round(v).toLocaleString('pl-PL');
+  const canvas = $('scene'), ctx = canvas.getContext('2d', {alpha:false});
+  const throttle = $('throttle'), reverser = $('reverser'), brake = $('brake');
+  const stations = [{name:'Początek',at:0},{name:'Leśna',at:1200},{name:'Końcowa',at:2400}];
+  const W = 1200, H = 520;
+  let state, particles = [], lastFrame = 0, uiElapsed = 0, renderElapsed = 0, audio;
+  const SAVE_KEY='ol49-linia-probna-save-v03';
+  const AUTO_KEY='ol49-linia-probna-autosave-v03';
+  let lastAutoSaveAt=0;
+
+  function reset(){
+    state = {distance:0,velocity:0,pressure:11.8,boilerWater:70,tenderWater:80,coal:85,fire:65,fireboxOpen:false,injector:false,paused:false,view:'exterior',stage:0,time:0,lastFuel:-10,completed:false,notice:'Gotowość do odjazdu. Zwolnij hamulec, ustaw nawrotnik i stopniowo otwieraj regulator.',noticeType:'',noticeUntil:999999,whistleUntil:0};
+    particles=[]; lastAutoSaveAt=0; throttle.value=0; reverser.value=70; brake.value=80;
+    $('pauseBtn').textContent='Ⅱ Pauza'; $('doorBtn').setAttribute('aria-pressed','false'); $('doorBtn').classList.remove('on'); $('injectorBtn').setAttribute('aria-pressed','false'); $('injectorBtn').classList.remove('on');
+    $('exteriorBtn').classList.add('active'); $('cabBtn').classList.remove('active');
+    syncUI(); draw();
+  }
+  // Zapis lokalny nie przesyła danych do sieci i nie wymaga konta.
+  function saveGame(showNotice=true){
+    try{
+      const data={version:3,savedAt:new Date().toISOString(),state:{...state,paused:false},controls:{throttle:+throttle.value,reverser:+reverser.value,brake:+brake.value}};
+      localStorage.setItem(showNotice?SAVE_KEY:AUTO_KEY,JSON.stringify(data));
+      if(showNotice)notice('Zapisano przejazd na tym urządzeniu.','success',5);
+      return true;
+    }catch(_){if(showNotice)notice('Nie można zapisać gry w tej przeglądarce. Sprawdź ustawienia prywatności.','warning',7);return false;}
+  }
+  function restoreGame(){
+    try{
+      const raw=localStorage.getItem(SAVE_KEY)||localStorage.getItem(AUTO_KEY);
+      if(!raw){notice('Nie znaleziono zapisanego przejazdu na tym urządzeniu.','warning',5);return;}
+      const data=JSON.parse(raw), s=data.state;
+      if(data.version!==3||!s||!data.controls||!Number.isFinite(s.distance)||!Number.isFinite(s.velocity)||!Number.isFinite(s.pressure))throw Error('Nieprawidłowy zapis');
+      const baseline=state;
+      state={...baseline,...s,distance:clamp(s.distance,0,2400),velocity:clamp(s.velocity,-18,24),pressure:clamp(s.pressure,0,16),boilerWater:clamp(s.boilerWater,0,100),tenderWater:clamp(s.tenderWater,0,100),coal:clamp(s.coal,0,100),fire:clamp(s.fire,0,100),paused:false};
+      state.fireboxOpen=!!s.fireboxOpen;state.injector=!!s.injector;state.view=s.view==='cab'?'cab':'exterior';state.stage=clamp(Math.floor(Number(s.stage)||0),0,2);
+      throttle.value=clamp(data.controls.throttle,0,100);reverser.value=clamp(data.controls.reverser,-100,100);brake.value=clamp(data.controls.brake,0,100);
+      particles=[];lastFrame=0;lastAutoSaveAt=state.time;
+      $('pauseBtn').textContent='Ⅱ Pauza';
+      $('injectorBtn').setAttribute('aria-pressed',String(state.injector));$('injectorBtn').classList.toggle('on',state.injector);
+      $('exteriorBtn').classList.toggle('active',state.view==='exterior');$('cabBtn').classList.toggle('active',state.view==='cab');
+      notice('Wczytano zapisany przejazd.','success',5);syncUI();draw();
+    }catch(_){notice('Zapis jest niekompletny lub uszkodzony. Nie zmieniono aktualnej jazdy.','warning',6);}
+  }
+  function setDoor(open){state.fireboxOpen=!!open;notice(open?'Drzwiczki paleniska otwarte. Możesz dorzucić węgiel.':'Drzwiczki paleniska zamknięte.','',4);syncUI();}
+  function notice(message,type='',duration=7){state.notice=message;state.noticeType=type;state.noticeUntil=state.time+duration;}
+  function getTarget(){return state.stage===0?stations[1]:stations[2];}
+  function nearStation(){return stations.find(st=>Math.abs(st.at-state.distance)<45) || null;}
+  function steamFactor(){return clamp(state.pressure/12,0,1.3);}
+  function tick(dt){
+    if(state.paused) return;
+    const s=state;
+    s.time+=dt;
+    const t=Number(throttle.value)/100, r=Number(reverser.value)/100, b=Number(brake.value)/100;
+    // Uproszczony, grywalny model: bilans pary, ognia i wody.
+    s.fire=clamp(s.fire-dt*(.075+.045*t+(s.fireboxOpen?.10:0)),0,100);
+    s.coal=clamp(s.coal-dt*(.002+.003*s.fire/100),0,100);
+    const steamUse=t*(.021+.009*clamp(Math.abs(s.velocity)/20,0,1));
+    const generation=.039*s.fire/100-.010;
+    s.pressure=clamp(s.pressure+dt*(generation-steamUse-(s.injector?.007:0)),0,16);
+    if(s.pressure>=15.9){s.pressure=15.65; if(Math.random()<dt*.5) notice('Zawory bezpieczeństwa wypuszczają nadmiar pary. Zmniejsz intensywność palenia.','warning',4);}
+    s.boilerWater=clamp(s.boilerWater-dt*(.006+.048*t),0,100);
+    if(s.injector && s.pressure>3 && s.tenderWater>0){
+      const transfer=Math.min(.16*dt,s.tenderWater);
+      s.boilerWater=clamp(s.boilerWater+transfer*.85,0,100);
+      s.tenderWater=clamp(s.tenderWater-transfer,0,100);
+    }
+    const waterSafe=s.boilerWater>15;
+    const pressureSafe=s.pressure>2.5;
+    const sign=Math.sign(s.velocity);
+    const power=(waterSafe&&pressureSafe)?(.54*t*steamFactor()*(.32+.68*Math.abs(r))*Math.max(.22,1-Math.abs(s.velocity)/32)):0;
+    const grade=.0018*Math.sin(s.distance/165)+.0011*Math.sin(s.distance/60);
+    const drag=sign*(.012+.00028*s.velocity*s.velocity);
+    let accel=power*Math.sign(r)-drag-9.81*grade;
+    if(Math.abs(s.velocity)>.03){accel-=sign*b*.73;}
+    else if(b>.12){s.velocity=0;accel=0;}
+    s.velocity+=accel*dt;
+    if(Math.abs(s.velocity)<.025 && (t<.04||b>.12||Math.abs(r)<.05))s.velocity=0;
+    s.velocity=clamp(s.velocity,-18,24);
+    s.distance+=s.velocity*dt;
+    if(s.distance<=0){s.distance=0;s.velocity=Math.max(0,s.velocity);}
+    if(s.distance>=2400){s.distance=2400;s.velocity=Math.min(0,s.velocity);}
+    if(s.stage===0 && Math.abs(s.distance-1200)<=36 && Math.abs(s.velocity)<.6 && s.time>8){
+      s.stage=1;notice('Postój na stacji Leśna zaliczony! Możesz uzupełnić wodę. Następny cel: stacja Końcowa, 1 200 m dalej.','success',14);
+    }
+    if(s.stage===1 && Math.abs(s.distance-2400)<=36 && Math.abs(s.velocity)<.6){
+      s.stage=2;s.completed=true;notice('Trasa ukończona! Oba postoje zaliczone. Możesz poćwiczyć manewry albo rozpocząć przejazd ponownie.','success',99999);
+    }
+    if(s.boilerWater<22 && Math.random()<dt*.14)notice('Niski poziom wody w kotle! Zamknij regulator i włącz inżektor.','warning',7);
+    if(s.pressure<4 && Math.random()<dt*.12)notice('Ciśnienie pary jest zbyt niskie. Zmniejsz pobór pary i podtrzymuj ogień.','warning',6);
+    if(s.fire<22 && Math.random()<dt*.12)notice('Palenisko wygasa. Dorzuć węgla.','warning',6);
+    if(s.stage<2){const d=getTarget().at-s.distance;if(d<220&&d>0&&s.velocity*3.6>27&&Math.random()<dt*.12)notice('Zbliża się peron. Rozpocznij hamowanie, aby zatrzymać się przy stacji!','warning',5);}
+    if(s.view==='exterior')updateSmoke(dt);
+  }
+  function updateSmoke(dt){
+    const rate=.7+state.fire/100*3+Number(throttle.value)/100*3;
+    if(Math.random()<dt*rate){particles.push({x:904+Math.random()*9,y:179,r:5+Math.random()*5,life:0,max:2.3+Math.random()*2.1,dx:-19-Math.abs(state.velocity)*4-Math.random()*15,dy:-20-Math.random()*17});}
+    for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life+=dt;p.x+=p.dx*dt;p.y+=p.dy*dt;p.r+=dt*11;if(p.life>p.max)particles.splice(i,1);}
+    if(particles.length>75)particles.splice(0,particles.length-75);
+  }
+  function syncUI(){
+    const s=state;
+    $('speed').textContent=Math.abs(s.velocity*3.6).toFixed(0);
+    $('pressure').textContent=s.pressure.toFixed(1).replace('.',',');
+    $('boilerWater').textContent=Math.round(s.boilerWater);$('tenderWater').textContent=Math.round(s.tenderWater);$('coal').textContent=Math.round(s.coal);
+    const values=[['speedFill',Math.abs(s.velocity*3.6)/85*100],['pressureFill',s.pressure/16*100],['boilerFill',s.boilerWater],['tenderFill',s.tenderWater],['coalFill',s.coal]];
+    for(const [id,val] of values){const el=$(id);el.style.width=clamp(val,0,100)+'%';el.style.background=(id==='boilerFill'&&s.boilerWater<25)||(id==='pressureFill'&&s.pressure<4)?'#db796b':undefined;}
+    $('throttleVal').textContent=throttle.value+'%';
+    $('reverserVal').textContent=(Number(reverser.value)>0?'+':'')+reverser.value+'%';
+    $('brakeVal').textContent=brake.value+'%';
+    $('fireStatus').textContent='ŻAR '+Math.round(s.fire)+'%'; $('doorBtn').querySelector('strong').textContent='Drzwiczki: '+(s.fireboxOpen?'OTWARTE':'ZAMKNIĘTE'); $('doorBtn').setAttribute('aria-pressed',String(s.fireboxOpen));$('doorBtn').classList.toggle('on',s.fireboxOpen);
+    $('runState').textContent=s.paused?'PAUZA':Math.abs(s.velocity)<.1?'POSTÓJ':s.velocity>0?'JAZDA NAPRZÓD':'JAZDA WSTECZ';
+    $('travelDistance').textContent=fmt(s.distance)+' / 2 400 m';
+    $('placeLabel').textContent=nearStation()?('STACJA '+nearStation().name.toUpperCase()):'SZLAK KOLEJOWY';
+    $('trainMarker').style.left=clamp(s.distance/2400*100,0,100)+'%';
+    document.querySelector('.station-point.middle').classList.toggle('done',s.stage>=1);
+    document.querySelector('.station-point.last').classList.toggle('done',s.stage>=2);
+    const target=getTarget();
+    if(s.stage===2){$('missionTitle').textContent='Przejazd ukończony';$('missionText').textContent='Oba postoje zaliczone. Spróbuj ponownie z płynniejszym hamowaniem i mniejszym zużyciem pary.';$('nextDistance').textContent='0';}
+    else {$('missionTitle').textContent='Dotrzyj do stacji '+target.name;
+      $('missionText').textContent=s.stage===0?'Zatrzymaj się przy peronie na 1,2 km. Pilnuj ciśnienia, wody i prędkości.':'Drugi odcinek: zatrzymaj się na końcowej stacji na 2,4 km.';
+      $('nextDistance').textContent=fmt(Math.abs(target.at-s.distance));}
+    $('refillBtn').disabled=!(nearStation()&&Math.abs(s.velocity)<.35&&s.tenderWater<99);
+    $('fireBtn').disabled=s.coal<2.5||s.time-s.lastFuel<1.2;
+    $('injectorBtn').querySelector('strong').textContent='Inżektor: '+(s.injector?'WŁ.':'WYŁ.');
+    const n=$('notice');
+    if(s.time>s.noticeUntil){n.textContent=s.completed?'Trasa zaliczona. Możesz uruchomić nową jazdę.':s.stage===0?'Wskazówka: zwolnij hamulec, otwórz regulator na 40–65% i obserwuj odległość do peronu.':'Wskazówka: przed kolejnym odjazdem uzupełnij zapas wody na stacji Leśna.';n.className='notice';}
+    else{n.textContent=s.notice;n.className='notice '+s.noticeType;}
+  }
+  function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h);}
+  function line(x1,y1,x2,y2,color,width=2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
+  function poly(pts,fill,stroke=null,lw=1){ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}}
+  function circle(x,y,r,fill,stroke=null,lw=1){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}}
+  function rounded(x,y,w,h,r,fill,stroke=null,lw=1){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}}
+  function label(text,x,y,font='16px system-ui',color='#fff',align='left'){ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align;ctx.fillText(text,x,y);ctx.textAlign='left';}
+  function sky(){const grad=ctx.createLinearGradient(0,0,0,360);grad.addColorStop(0,'#8cabb4');grad.addColorStop(.55,'#c4ccbc');grad.addColorStop(1,'#e5cfab');rect(0,0,W,H,grad);circle(1015,92,47,'rgba(255,233,183,.65)');for(let i=0;i<7;i++){const x=((i*230-state.distance*.11)%1550+1550)%1550-130;const y=80+i%3*34;ctx.fillStyle='rgba(250,248,231,.32)';ctx.beginPath();ctx.ellipse(x,y,90,18,0,0,Math.PI*2);ctx.fill();}
+    poly([[0,300],[90,266],[170,286],[265,244],[360,276],[475,240],[600,285],[730,250],[850,284],[975,242],[1120,285],[1200,268],[1200,400],[0,400]],'#8caaa0');
+    poly([[0,341],[110,299],[230,318],[325,287],[425,310],[550,277],[650,324],[750,286],[900,317],[1010,285],[1130,321],[1200,294],[1200,420],[0,420]],'#729285');
+    rect(0,347,1200,173,'#79917a');
+    for(let i=0;i<21;i++){const x=((i*103+23-state.distance*1.4)%1550+1550)%1550-100;const y=336+(i%4)*8;tree(x,y,.6+(i%3)*.15,i%5===0);}
+    for(let i=0;i<8;i++){const x=((i*235+80-state.distance*2)%1660+1660)%1660-120;line(x,295,x,385,'#544e3d',5);line(x-12,316,x+12,316,'#544e3d',4);line(x+12,316,x+235,315,'rgba(66,68,57,.32)',1);}
+  }
+  function tree(x,y,s,large){ctx.save();ctx.translate(x,y);ctx.scale(s,s);rect(-3,-20,7,48,'#5c6250');for(let j=0;j<3;j++)circle((j-1)*15,-31-j%2*14,large?30:25,j===1?'#526e59':'#5d7d63');ctx.restore();}
+  function stationWorld(){for(const st of stations){const x=920+(st.at-state.distance)*1.75;if(x< -210||x>1470)continue;ctx.save();ctx.translate(x,0);rect(-100,347,220,18,'#9c9881');rect(-100,365,220,6,'#666959');rect(-72,270,142,78,'#e2d4b4');poly([[-88,271],[-2,228],[83,271]],'#63564d');rect(-48,291,39,57,'#657f7d');rect(24,292,25,26,'#718d89');rect(18,286,38,3,'#eee2bd');rect(-108,318,11,46,'#d1c49e');rounded(-161,288,100,28,4,'#23453f','#b8c9ac',2);label(st.name.toUpperCase(),-111,307,'bold 14px system-ui','#f0e9d7','center');
+    // żuraw wodny przy stacji
+    rect(110,245,11,113,'#4b5c55');rect(103,243,26,12,'#a4a990');rect(114,250,90,9,'#596e62');rect(195,257,8,42,'#4a5e57');circle(119,249,12,'#65796c','#283c37',3);rect(95,352,45,8,'#5d6860');
+    ctx.restore();}}
+  function track(){rect(0,418,1200,102,'#655d4b');rect(0,453,1200,67,'#5a594b');for(let i=0;i<50;i++){const x=((i*31-state.distance*7)%1250+1250)%1250-25;rect(x,419,18,37,'#453d34');rect(x+3,421,11,32,'#756554');}
+    rect(0,423,1200,7,'#b9b5a1');rect(0,432,1200,3,'#424847');rect(0,446,1200,5,'#b9b5a1');line(0,425,1200,425,'#e2d7bd',2);}
+  function wheel(x,y,r,angle,driver=false){circle(x+2,y+3,r+5,'#222c2b');circle(x,y,r,'#232c2c','#a7a18e',5);circle(x,y,r-7,'#394543','#7e8177',2);for(let i=0;i<9;i++){const a=angle+i*Math.PI*2/9;line(x+Math.cos(a)*10,y+Math.sin(a)*10,x+Math.cos(a)*(r-10),y+Math.sin(a)*(r-10),'#adb0a4',driver?4:3);}circle(x,y,11,'#b5b6a9','#535f5b',3);circle(x,y,5,'#5a6761');}
+  function locomotive(){const d=state.distance;const a=d*2*Math.PI/5.3;
+    // cień
+    ctx.fillStyle='rgba(0,0,0,.23)';ctx.beginPath();ctx.ellipse(608,428,445,13,0,0,Math.PI*2);ctx.fill();
+    // tender
+    rounded(230,276,245,75,7,'#303e3c','#8a8775',3);poly([[232,276],[246,247],[462,247],[475,276]],'#394744','#a7a18c',2);for(let i=0;i<13;i++)circle(246+i*18,283,2,'#9a9884');rect(255,255,193,12,'#252c2b');for(let i=0;i<14;i++)circle(262+i*13,255-(i%3)*4,10,'#171d1d');rect(250,344,220,10,'#171f20');
+    // budka maszynisty
+    poly([[472,335],[474,211],[486,197],[614,197],[623,209],[619,345]],'#2d3c39','#989583',4);rect(486,215,117,75,'#526a6a');rect(496,225,43,54,'#93b0aa');rect(550,225,43,54,'#9db8b1');rect(543,211,7,91,'#25332f');rect(486,292,117,44,'#293b37');line(481,209,612,209,'#c3bba1',4);rounded(500,305,93,24,2,'#202b2b','#9d9b88',2);label('OL49',547,322,'bold 16px Georgia','#f1dfb3','center');
+    // podwozie i walczak
+    rect(598,338,345,21,'#1d2828');rect(600,357,345,13,'#6b6c62');rect(600,369,342,8,'#252e2d');
+    const metal=ctx.createLinearGradient(0,255,0,340);metal.addColorStop(0,'#54645c');metal.addColorStop(.35,'#2f3e3a');metal.addColorStop(.8,'#26322f');metal.addColorStop(1,'#53615a');rounded(612,249,306,91,42,metal,'#b0ab93',3);
+    rect(636,251,8,89,'#8b8e7d');rect(744,251,9,89,'#7f8576');rect(851,251,8,89,'#838a7a');
+    rounded(898,244,54,101,16,'#34403b','#aaa894',3);rounded(933,250,23,88,8,'#252e2c','#969482',3);
+    // komin, kopuła, piasecznica
+    rect(883,186,29,66,'#263331');rounded(877,178,41,13,4,'#353c36','#9b9882',2);rounded(870,165,55,14,4,'#303936','#b0a38b',2);
+    rounded(736,224,50,32,12,'#34413b','#9e9d89',2);rounded(746,215,31,20,9,'#3b4c43');rounded(683,235,32,20,7,'#4b5a4f','#999681',2);
+    // rury, poręcze
+    line(622,282,948,282,'#b1a58c',3);for(let x=660;x<930;x+=72)line(x,282,x,294,'#a7a48f',2);line(620,317,916,317,'#182a29',4);
+    // koła wózka, tendra
+    [267,318,390,441].forEach(x=>wheel(x,399,24,a*1.7));wheel(578,401,24,a*1.6);wheel(939,401,24,a*1.6);
+    [667,766,865].forEach(x=>wheel(x,388,39,a,true));
+    // wiązar sprzęgłowy z identyczną fazą dla 3 osi
+    const crank=19,dx=Math.cos(a)*crank,dy=Math.sin(a)*crank;
+    line(667+dx,388+dy,865+dx,388+dy,'#272f2d',14);
+    line(667+dx,388+dy,865+dx,388+dy,'#c4c0ae',8);
+    [667,766,865].forEach(x=>circle(x+dx,388+dy,7,'#c4c0ae','#3a4845',3));
+    // korbowód od cylindra
+    rounded(926,330,43,33,5,'#596660','#c2b8a2',2);line(943,349,865+dx,388+dy,'#333b38',13);line(943,349,865+dx,388+dy,'#b6b5a6',7);circle(943,349,8,'#d0c5aa','#5a5d53',2);
+    rect(952,358,33,12,'#202928');rect(219,358,22,10,'#202928');
+    // detale
+    rounded(798,270,58,25,3,'#242e2c','#aca38a',2);label('P K P',827,288,'bold 15px Georgia','#e7d7ad','center');
+    for(let i=0;i<7;i++)circle(909,261+i*11,1.7,'#a9a48f');
+    for(const p of particles){ctx.globalAlpha=clamp(1-p.life/p.max,0,1)*.47;circle(p.x,p.y,p.r,'#505451');}ctx.globalAlpha=1;
+    // para z cylindrów w ruchu
+    if(Math.abs(state.velocity)>1&&Number(throttle.value)>15){const q=.3+.22*Math.sin(state.time*8);ctx.globalAlpha=q;circle(960,364,16+8*Math.sin(state.time*5),'#d7d8cb');ctx.globalAlpha=1;}
+  }
+  function exterior(){sky();stationWorld();track();locomotive();}
+  function gauge(x,y,r,val,min,max,unit,labelText){circle(x,y,r+5,'#151d1d','#86775f',5);circle(x,y,r,'#ddd5bc','#5c5c51',3);for(let i=0;i<=10;i++){const a=(-.78+i/10*1.56)*Math.PI;const sx=x+Math.sin(a)*(r-10),sy=y-Math.cos(a)*(r-10),ex=x+Math.sin(a)*(r-19),ey=y-Math.cos(a)*(r-19);line(sx,sy,ex,ey,'#4c514a',i%2===0?2.5:1.3);}const v=clamp((val-min)/(max-min),0,1),angle=(-.78+v*1.56)*Math.PI;line(x,y,x+Math.sin(angle)*(r-22),y-Math.cos(angle)*(r-22),'#8b3f30',3);circle(x,y,6,'#5a554a');label(labelText,x,y+17,'bold 14px system-ui','#383f38','center');label(unit,x,y+30,'11px system-ui','#4c5149','center');}
+  function cab(){sky();
+    // widok z okna: perspektywa toru
+    rect(0,340,1200,180,'#657963');
+    const vanishX=604,vanishY=222;
+    poly([[vanishX-10,vanishY],[vanishX+10,vanishY],[1050,388],[155,388]],'#786e58');
+    line(vanishX-9,vanishY,255,390,'#ddd3b6',7);line(vanishX+9,vanishY,955,390,'#ddd3b6',7);
+    for(let i=0;i<22;i++){const phase=((i/22+state.distance*.006)%1+1)%1;const z=phase*phase;const y=vanishY+z*169;const half=15+z*395;line(vanishX-half,y,vanishX+half,y,'#453f37',2+z*9);}
+    for(let i=0;i<11;i++){const offset=((i*100-state.distance*2)%1400+1400)%1400;const xx=offset-80;tree(xx,333,.55+(i%3)*.18,false);}
+    // ramy okien i wnętrze budki
+    rect(0,0,1200,43,'#222b28');rect(0,43,132,325,'#26312e');rect(1060,43,140,325,'#26312e');rect(556,40,38,310,'#27332f');rect(112,40,15,317,'#53625b');rect(1058,40,15,317,'#53625b');rect(0,344,1200,176,'#26322e');rect(0,358,1200,18,'#6c6454');rect(0,374,1200,146,'#342e29');
+    for(let i=0;i<17;i++)line(i*80,377,i*80+30,520,'rgba(0,0,0,.10)',2);
+    rounded(297,367,603,145,16,'#343b35','#8d8069',5);
+    gauge(420,427,52,Math.abs(state.velocity)*3.6,0,90,'km/h','PRĘDKOŚĆ');gauge(599,427,52,state.pressure,0,16,'bar','CIŚNIENIE');gauge(778,427,52,state.boilerWater,0,100,'%','WODA');
+    // palenisko z żarem
+    rounded(41,391,189,112,11,'#191e1c','#8e826e',6);rounded(63,410,145,75,7,'#181714','#797366',4);const glow=ctx.createRadialGradient(130,471,5,130,468,80);glow.addColorStop(0,'#ffba61');glow.addColorStop(.5,'#d36c32');glow.addColorStop(1,'#321b13');rounded(72,420,128,58,7,glow);for(let i=0;i<8;i++)line(75+i*15,426,75+i*15,475,'rgba(20,19,18,.7)',5);
+    if(!state.fireboxOpen){rounded(65,410,143,73,7,'#3a413b','#98846a',5);rounded(79,425,112,43,5,'#272c29','#7c715f',3);line(87,445,185,445,'#716658',4);circle(192,454,7,'#c0a37c');}
+    else {label('OTWARTE',133,410,'bold 12px system-ui','#f3c18a','center');}
+    // dźwignie przy oknie
+    line(1004,500,988,395,'#b7aa8b',13);circle(988,395,16,'#372c24','#d4b88d',3);line(1090,502,1105,427,'#b7aa8b',11);circle(1105,427,14,'#6b382f','#b9a48b',3);
+    label('OL49 • STANOWISKO MASZYNISTY',595,57,'bold 13px system-ui','#f0e7d5','center');
+    if(state.pressure>15.5){ctx.globalAlpha=.3;circle(1030,195,40,'#f5f0df');ctx.globalAlpha=1;}
+  }
+  function draw(){ctx.clearRect(0,0,W,H);if(state.view==='cab')cab();else exterior();if(state.paused){rect(0,0,W,H,'rgba(8,16,16,.5)');label('PAUZA',W/2,H/2,'bold 54px system-ui','#f6e9d4','center');}}
+  function whistle(){if(!audio){try{audio=new (window.AudioContext||window.webkitAudioContext)();}catch(_){notice('Dźwięk nie jest dostępny w tej przeglądarce.','warning',4);return;}}if(audio.state==='suspended')audio.resume();const t=audio.currentTime;const gain=audio.createGain();gain.gain.setValueAtTime(.001,t);gain.gain.exponentialRampToValueAtTime(.09,t+.07);gain.gain.setValueAtTime(.09,t+.52);gain.gain.exponentialRampToValueAtTime(.001,t+.82);gain.connect(audio.destination);[570,855,1140].forEach((f,i)=>{const osc=audio.createOscillator();osc.type=i===0?'sine':'triangle';osc.frequency.setValueAtTime(f,t);osc.frequency.linearRampToValueAtTime(f+8,t+.4);osc.connect(gain);osc.start(t);osc.stop(t+.85);});notice('Sygnał gwizdkiem parowym.','',2);}
+  $('doorBtn').addEventListener('click',()=>setDoor(!state.fireboxOpen));
+  canvas.addEventListener('pointerdown',e=>{
+    if(state.view!=='cab'||state.paused)return;
+    const bounds=canvas.getBoundingClientRect();
+    const x=(e.clientX-bounds.left)*W/bounds.width,y=(e.clientY-bounds.top)*H/bounds.height;
+    if(x>=40&&x<=240&&y>=385&&y<=510)setDoor(!state.fireboxOpen);
+  });
+  $('saveBtn').addEventListener('click',()=>saveGame(true));
+  $('loadBtn').addEventListener('click',restoreGame);
+  $('fireBtn').addEventListener('click',()=>{if(!state.fireboxOpen){notice('Najpierw otwórz drzwiczki paleniska.','warning',5);return;}if(state.coal<2.5||state.time-state.lastFuel<1.2)return;state.coal=clamp(state.coal-2.5,0,100);state.fire=clamp(state.fire+15,0,100);state.lastFuel=state.time;notice('Dorzuciłeś węgla do paleniska. Żar wzrósł, ale ciśnienie potrzebuje chwili, by się odbudować.','success',5);syncUI();});
+  $('injectorBtn').addEventListener('click',()=>{state.injector=!state.injector;$('injectorBtn').classList.toggle('on',state.injector);$('injectorBtn').setAttribute('aria-pressed',String(state.injector));notice(state.injector?'Inżektor włączony. Woda ze zbiornika zasila kocioł, zużywając część pary.':'Inżektor wyłączony.','',5);syncUI();});
+  $('refillBtn').addEventListener('click',()=>{const st=nearStation();if(!st||Math.abs(state.velocity)>.35){notice('Wodę można pobrać tylko podczas postoju przy stacji.','warning',4);return;}state.tenderWater=clamp(state.tenderWater+35,0,100);notice('Żuraw wodny na stacji '+st.name+': uzupełniono zapas wody w tendrze.','success',6);syncUI();});
+  $('whistleBtn').addEventListener('click',whistle);
+  $('pauseBtn').addEventListener('click',()=>{state.paused=!state.paused;$('pauseBtn').textContent=state.paused?'▶ Wznów':'Ⅱ Pauza';syncUI();});
+  $('resetBtn').addEventListener('click',reset);
+  $('exteriorBtn').addEventListener('click',()=>{state.view='exterior';$('exteriorBtn').classList.add('active');$('cabBtn').classList.remove('active');});
+  $('cabBtn').addEventListener('click',()=>{state.view='cab';$('cabBtn').classList.add('active');$('exteriorBtn').classList.remove('active');});
+  [throttle,reverser,brake].forEach(el=>el.addEventListener('input',syncUI));
+  document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;let used=true;switch(e.code){case'ArrowUp':throttle.value=clamp(+throttle.value+5,0,100);break;case'ArrowDown':throttle.value=clamp(+throttle.value-5,0,100);break;case'ArrowLeft':brake.value=clamp(+brake.value-5,0,100);break;case'ArrowRight':brake.value=clamp(+brake.value+5,0,100);break;case'Space':whistle();break;default:used=false;}if(used){e.preventDefault();syncUI();}});
+  document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden&&state)saveGame(false);});
+  function frame(ts){if(!lastFrame)lastFrame=ts;const dt=clamp((ts-lastFrame)/1000,0,.06);lastFrame=ts;if(!document.hidden){tick(dt);if(state.time-lastAutoSaveAt>12){saveGame(false);lastAutoSaveAt=state.time;}uiElapsed+=dt;renderElapsed+=dt;if(uiElapsed>=.12){syncUI();uiElapsed=0;}if(renderElapsed>=1/30){draw();renderElapsed=0;}}requestAnimationFrame(frame);}
+  reset();requestAnimationFrame(frame);
+})();
+
+</script>
+</body>
+</html>
