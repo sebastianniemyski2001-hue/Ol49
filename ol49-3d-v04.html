@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#101a20" />
+  <meta name="description" content="Ol49 — przeglądarkowy symulator jazdy polskim parowozem. Wersja 0.4: szczegółowszy model Ol49-59 3D, gospodarka parowa, postoje i uzupełnianie wody." />
+  <title>OL49 · Linia próbna</title>
+
+
+  <style>
+:root{color-scheme:dark;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--cream:#efeee4;--muted:#a7b8bd;--accent:#d99f59;--panel:#101c24dc;--line:#ffffff20}
+*{box-sizing:border-box}html,body,#app{height:100%;width:100%;margin:0;overflow:hidden}body{background:#77888a;color:var(--cream);overscroll-behavior:none}button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}#app{position:relative;isolation:isolate}#viewport{position:absolute;inset:0;touch-action:none}#viewport canvas{width:100%;height:100%;display:block;touch-action:none}.vignette{z-index:1;position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#0c202847 0%,transparent 19%,transparent 55%,#10212c70 100%)}.topbar{z-index:3;position:absolute;left:0;right:0;top:0;padding:calc(18px + env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) 0 max(22px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:none}.topbar>*{pointer-events:auto}.brand{display:flex;align-items:center;gap:11px;text-shadow:0 1px 10px #0007}.brand-mark{display:grid;place-items:center;border:1px solid #ffffff7a;width:35px;height:35px;font-family:Georgia,serif;font-weight:700;font-size:14px;letter-spacing:-2px}.brand b{font-size:20px;line-height:1;letter-spacing:.15em;font-weight:650}.brand small{display:block;font-size:9px;letter-spacing:.19em;color:#e0e6e8;margin-top:6px}.top-right{display:flex;gap:7px;align-items:center}.status{font-size:10px;letter-spacing:.12em;display:flex;align-items:center;gap:9px;padding:9px 12px;background:#0c1820a5;border:1px solid #ffffff24;border-radius:5px}.status i{width:6px;height:6px;background:#9ac4a3;border-radius:50%;box-shadow:0 0 12px #91d8a2}.icon-button{border:1px solid #ffffff36;color:#f3f2eb;background:#172a33bb;border-radius:5px;height:36px;padding:0 12px;display:flex;gap:7px;align-items:center;font-weight:600;font-size:11px;letter-spacing:.08em;backdrop-filter:blur(12px)}.icon-button:hover,.icon-button[aria-pressed="true"]{background:#355063dd}.dashboard{position:absolute;left:max(22px,env(safe-area-inset-left));top:110px;z-index:2;background:linear-gradient(130deg,#12232bc9,#13232ac4);border:1px solid #ffffff30;backdrop-filter:blur(18px);border-radius:7px;padding:17px 19px;min-width:190px;box-shadow:0 12px 30px #00131b28}.small-label,.control-header label{font-size:10px;letter-spacing:.16em;font-weight:650;color:#d3dada}.speed{display:flex;align-items:baseline;gap:8px;margin:4px 0}.speed>span{font:400 54px/1.06 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:-4px;font-variant-numeric:tabular-nums}.speed small{font-size:12px;color:var(--muted)}.speed-track{height:2px;background:#ffffff2b}.speed-track>div{height:100%;width:0;background:var(--accent);transition:width .2s}.readouts{display:flex;gap:18px;margin-top:15px}.readouts span{display:grid;gap:6px;color:#c6d2d3;font-size:8px;letter-spacing:.07em}.readouts b{font-size:11px;letter-spacing:0;color:#f1eee3;font-weight:600}.help{position:absolute;z-index:2;right:20px;top:110px;max-width:265px;font-size:11px;line-height:1.65;color:#fff9;text-align:right;text-shadow:0 1px 4px #000b}.console{position:absolute;z-index:3;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(770px,calc(100% - 35px));border-radius:9px;border:1px solid #ffffff35;box-shadow:0 20px 50px #06141bb0;background:linear-gradient(145deg,#13252aef,#0c1922f2);backdrop-filter:blur(24px);padding:13px 20px 9px}.console-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:1px 0 11px;color:#efede7;font-size:10px;font-weight:700;letter-spacing:.15em}.console-head>:last-child{color:var(--accent)}.controls-grid{display:grid;grid-template-columns:1fr 1fr 215px;gap:22px;align-items:center;padding:13px 0 8px}.control-header{display:flex;justify-content:space-between;margin:0 0 15px}.control-header output{font-size:12px;color:#f6eee2;font-family:ui-monospace,monospace}.control input[type="range"]{appearance:none;-webkit-appearance:none;width:100%;height:5px;border-radius:10px;outline:none;background:linear-gradient(90deg,#c98e4f var(--progress,0%),#60747b var(--progress,0%));cursor:grab;touch-action:none}.control input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:#f0e5ce;border:5px solid #283c42;border-radius:50%;box-shadow:0 0 0 1px #e3b782,0 3px 10px #0008}.control input[type="range"]::-moz-range-thumb{width:14px;height:14px;background:#f0e5ce;border:4px solid #283c42;border-radius:50%}.endpoints{display:flex;justify-content:space-between;color:#8b9a9d;letter-spacing:.11em;font-size:8px;margin-top:12px}.buttons{display:flex;gap:9px}.buttons button{width:50%;height:68px;border-radius:5px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;letter-spacing:.07em;font-size:9px;font-weight:750}.buttons .secondary{border:1px solid #9ba9ae6b;background:#20313ad9;color:#ebeee9}.buttons .primary{border:1px solid #a77b50;background:linear-gradient(140deg,#aa7742,#83592d);color:#fff9e8}.buttons button:active{filter:brightness(1.4);transform:scale(.98)}.control-symbol{font-size:24px;line-height:1.2;font-weight:400}.note{font-size:9px;color:#80949d;text-align:center;letter-spacing:.02em;line-height:1.4;margin:6px auto 0}.toast{z-index:8;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) translateY(10px);opacity:0;pointer-events:none;padding:11px 18px;color:#fff;background:#152830e8;border:1px solid #e3b67e90;border-radius:4px;transition:.25s;font-size:12px;max-width:80%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,-50%)}.fallback{position:absolute;z-index:10;inset:0;background:#18252c;padding:24vh 10vw;text-align:center}.fallback[hidden]{display:none}#loading{position:absolute;z-index:12;inset:0;background:radial-gradient(circle at 48% 40%,#344d51,#121e26 80%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .65s;color:#dfe7e6}#loading strong{font-size:20px;letter-spacing:.2em;font-weight:550}#loading span{color:#b5c3c4;font-size:12px}#loading .loading-icon{font-size:35px;color:#e1b07b;margin-bottom:20px}#loading.done{opacity:0;pointer-events:none}
+
+/* v0.3: gameplay HUD and collapsible steam controls, optimized for small screens. */
+.buttons button{width:33.333%;min-width:0}.buttons button .control-symbol{font-size:20px}
+.controls-grid{grid-template-columns:1fr 1fr 248px}.console{width:min(830px,calc(100% - 35px))}
+.mission-bar{position:absolute;z-index:2;bottom:155px;left:50%;transform:translateX(-50%);width:min(350px,calc(100% - 36px));padding:10px 13px;background:#10222bda;border:1px solid #d4a36b80;border-radius:8px;box-shadow:0 5px 19px #11212a55;pointer-events:none}
+.mission-header{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px;letter-spacing:.12em}.mission-header span{color:#e8b77b;font-family:ui-monospace,monospace;font-size:12px}.mission-track{height:3px;background:#ffffff28;margin:8px 0 6px}.mission-track i{display:block;width:0;height:100%;background:#dfaf6e}.mission-bar small{font-size:10px;color:#c2d0ca}
+.boiler-panel[hidden]{display:none!important}.boiler-panel{position:absolute;z-index:7;left:50%;transform:translateX(-50%);bottom:162px;width:min(520px,calc(100% - 24px));max-height:min(66vh,540px);overflow:auto;-webkit-overflow-scrolling:touch;background:#10202af4;border:1px solid #d5a4748c;box-shadow:0 15px 45px #000b;border-radius:10px;padding:14px;color:#f1e9d8;backdrop-filter:blur(18px)}.boiler-heading{display:flex;align-items:start;justify-content:space-between;margin-bottom:12px}.boiler-heading strong{font-size:13px;letter-spacing:.1em}.boiler-heading small{display:block;font-size:10px;color:#aabcbb;margin-top:5px}.boiler-heading button{border:1px solid #89969a;background:#253942;color:#f6e4c6;border-radius:7px;font-size:22px;width:35px;height:35px}.boiler-gauges{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.boiler-gauges>div{background:#23353b;border-radius:7px;padding:10px 7px}.boiler-gauges span{display:block;font-size:9px;letter-spacing:.07em;color:#bdccc8;min-height:22px}.boiler-gauges b{font:600 25px ui-monospace,monospace}.boiler-gauges small{font-size:10px;color:#d5b88d}.boiler-gauges meter{width:100%;height:8px;margin-top:5px;accent-color:#d8a56b}.boiler-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}.boiler-actions button,.save-actions button{background:#2c4549;border:1px solid #637e7b;border-radius:7px;color:#eee6d6;padding:11px 6px;min-height:44px;font-size:11px;font-weight:650;touch-action:manipulation}.boiler-actions button.active{background:#84623b;border-color:#e4b57a}.boiler-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#bfcdcb;font-size:11px;line-height:1.5;margin-top:12px}.boiler-footer #boiler-warning{color:#e2bd86}.save-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px;border-top:1px solid #ffffff1e;padding-top:10px}.save-actions button{font-size:10px;background:#192e35}
+@media(max-width:700px){.controls-grid{grid-template-columns:1fr 1fr}.console{width:calc(100% - 18px)}.buttons{grid-column:1/-1}.buttons button{width:33.333%;font-size:8px}.buttons button .control-symbol{font-size:17px}.mission-bar{bottom:calc(172px + env(safe-area-inset-bottom));padding:8px 11px}.boiler-panel{bottom:calc(174px + env(safe-area-inset-bottom));max-height:55vh}.boiler-gauges{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-height:440px){.controls-grid{grid-template-columns:1fr 1fr 210px}.buttons{grid-column:auto}.mission-bar{bottom:100px;left:12px;transform:none;width:220px}.boiler-panel{bottom:8px;left:auto;right:8px;transform:none;width:min(420px,63vw);max-height:calc(100vh - 20px)}.boiler-gauges{grid-template-columns:repeat(4,1fr)}}
+
+@media(max-width:700px){.topbar{padding-top:calc(9px + env(safe-area-inset-top));padding-left:12px;padding-right:12px}.brand-mark{width:30px;height:30px}.brand b{font-size:16px}.brand small{font-size:7px}.top-right{gap:4px}.status{display:none}.icon-button{height:30px;font-size:10px;padding:0 9px}.dashboard{left:12px;top:calc(64px + env(safe-area-inset-top));padding:10px 12px;min-width:145px}.speed>span{font-size:37px;letter-spacing:-2px}.small-label{font-size:8px}.readouts{gap:10px;margin-top:10px}.readouts span{font-size:7px}.readouts b{font-size:9px}.help{display:none}.console{width:calc(100% - 18px);bottom:calc(7px + env(safe-area-inset-bottom));padding:10px 12px 8px}.console-head{padding-bottom:8px;font-size:9px}.controls-grid{gap:12px;grid-template-columns:1fr 1fr;align-items:center;padding:10px 0 4px}.buttons{grid-column:1/-1;justify-content:stretch}.buttons button{height:39px;flex-direction:row;gap:8px}.control-symbol{font-size:18px}.control-header{margin-bottom:12px}.control-header label{font-size:9px}.note{display:none}.endpoints{font-size:7px;margin-top:9px}}
+@media(max-height:440px){.topbar{padding-top:6px}.dashboard{top:56px}.console{bottom:5px}.controls-grid{grid-template-columns:1fr 1fr 165px;gap:14px;padding:9px 0 0}.buttons{grid-column:auto}.buttons button{height:54px;flex-direction:column}.console-head{padding-bottom:8px}.note{display:none}.endpoints{display:none}.control input[type="range"]{margin-bottom:9px}.control-header{margin-bottom:6px}.speed>span{font-size:35px}.dashboard{padding:8px 10px}.readouts{margin-top:7px}.readouts span{font-size:7px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  
+/* Narrow-screen overrides should supersede the original prototype layout. */
+@media(max-width:700px){.controls-grid{grid-template-columns:1fr 1fr}.buttons{grid-column:1/-1}.buttons button{height:43px;width:33.333%;flex-direction:row}.mission-bar{bottom:calc(166px + env(safe-area-inset-bottom))}.boiler-panel{bottom:calc(168px + env(safe-area-inset-bottom))}}
+@media(max-height:440px){.controls-grid{grid-template-columns:1fr 1fr 210px}.buttons{grid-column:auto}.buttons button{height:54px;flex-direction:column}.mission-bar{bottom:94px;left:12px;transform:none;width:220px}.boiler-panel{bottom:8px;left:auto;right:8px;transform:none;max-height:calc(100vh - 20px)}}
+
+  </style>
+  <script type="importmap">
+    {"imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+    }}
+  </script>
+</head>
+<body>
+  <main id="app">
+    <div id="viewport" aria-label="Scena 3D z parowozem i linią kolejową"></div>
+    <div id="loading" role="status"><div class="loading-icon">◈</div><strong>OL49 · LINIA PRÓBNA</strong><span>Przygotowywanie makiety…</span></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">OL</span><span><b>OL49</b><small>LINIA PRÓBNA · WERSJA 0.4 3D</small></span></div>
+      <div class="top-right"><span class="status"><i></i> SYMULACJA AKTYWNA</span><button id="camera" class="icon-button" title="Zmień kamerę" aria-label="Zmień kamerę">◉ <span>KAMERA</span></button><button id="audio" class="icon-button" title="Dźwięk" aria-label="Włącz dźwięk">♪ <span>DŹWIĘK</span></button></div>
+    </header>
+    <aside class="dashboard" aria-label="Przyrządy pokładowe">
+      <div class="small-label">PRĘDKOŚĆ</div>
+      <div class="speed"><span id="speed">00</span><small>km/h</small></div>
+      <div class="speed-track"><div id="speed-fill"></div></div>
+      <div class="readouts"><span>ODCINEK <b id="distance">0 m</b></span><span>KIERUNEK <b id="direction-label">NAPRZÓD</b></span></div>
+    </aside>
+    <div class="help" id="hint">Przesuń palcem, aby obrócić kamerę. Ściśnij dwoma palcami, aby przybliżyć.</div>
+    <section class="mission-bar" aria-live="polite"><div class="mission-header"><strong id="mission-name">CEL: LEŚNA</strong><span id="mission-range">225 m</span></div><div class="mission-track"><i id="mission-fill"></i></div><small id="mission-help">Zatrzymaj skład przy peronie.</small></section>
+    <section id="boiler-panel" class="boiler-panel" hidden aria-label="Obsługa kotła parowego">
+      <div class="boiler-heading"><div><strong>KOCIOŁ I PALENISKO</strong><small>Uproszczona symulacja techniczna</small></div><button id="boiler-close" aria-label="Zamknij panel kotła">×</button></div>
+      <div class="boiler-gauges">
+        <div><span>CIŚNIENIE</span><b id="pressure-readout">12,0</b><small>bar</small><meter id="pressure-meter" min="0" max="16" low="4" high="14" optimum="12" value="12"></meter></div>
+        <div><span>WODA KOTŁA</span><b id="water-readout">72</b><small>%</small><meter id="water-meter" min="0" max="100" low="28" high="92" optimum="70" value="72"></meter></div>
+        <div><span>ŻAR PALENISKA</span><b id="fire-readout">74</b><small>%</small><meter id="fire-meter" min="0" max="100" value="74"></meter></div>
+        <div><span>WODA TENDRA</span><b id="tender-readout">85</b><small>%</small><meter id="tender-meter" min="0" max="100" value="85"></meter></div>
+      </div>
+      <div class="boiler-actions"><button id="firebox">Otwórz palenisko</button><button id="shovel">Dorzucić węgiel</button><button id="injector">Inżektor: WYŁ.</button><button id="replenish">Żuraw wodny</button></div>
+      <div class="boiler-footer"><span id="coal-readout">Węgiel: 90%</span><span id="boiler-warning">Pilnuj ciśnienia i poziomu wody.</span></div>
+      <div class="save-actions"><button id="save-game">Zapisz jazdę</button><button id="load-game">Wczytaj</button><button id="reset-game">Od nowa</button></div>
+    </section>
+    <section class="console" aria-label="Sterowanie lokomotywą">
+      <div class="console-head"><span>STEROWANIE MASZYNISTY</span><span id="engine-state">POSTÓJ</span></div>
+      <div class="controls-grid">
+        <div class="control control-throttle"><div class="control-header"><label for="throttle">REGULATOR</label><output id="throttle-val">0%</output></div><input id="throttle" type="range" min="0" max="100" step="1" value="0" aria-label="Regulator jazdy" /><div class="endpoints"><span>ZAMKNIĘTY</span><span>OTWARTY</span></div></div>
+        <div class="control control-brake"><div class="control-header"><label for="brake">HAMULEC</label><output id="brake-val">40%</output></div><input id="brake" type="range" min="0" max="100" step="1" value="40" aria-label="Siła hamowania" /><div class="endpoints"><span>ZWOLNIONY</span><span>ZACIĄGNIĘTY</span></div></div>
+        <div class="control buttons"><button id="reverse" class="secondary"><span class="control-symbol">⇄</span><span id="reverse-label">NAPRZÓD</span></button><button id="whistle" class="primary"><span class="control-symbol">♬</span><span>GWIZDEK</span></button><button id="boiler-toggle" class="secondary" aria-expanded="false" aria-controls="boiler-panel"><span class="control-symbol">◴</span><span>KOCIOŁ</span></button></div>
+      </div>
+      <p class="note">OL49-59 3D · Leśna → Tartak. Model i termodynamika są przybliżeniami, nie dokładną dokumentacją techniczną.</p>
+    </section>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div class="fallback" id="error" hidden><h2>Nie udało się uruchomić sceny 3D</h2><p>Sprawdź połączenie z internetem. Biblioteka 3D jest pobierana przy pierwszym uruchomieniu. Otwórz grę w Safari lub Chrome.</p></div>
+  </main>
+  <script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+// --- scene.js ---
+
+// A single stretch of Polish standard-gauge railway, deliberately without a station.
+// All dimensions are expressed as approximate metres.
+function createRailway() {
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#b6c4bf');
+  scene.fog = new THREE.FogExp2('#bcc6bd', 0.0072);
+
+  scene.add(new THREE.HemisphereLight(0xdceafb, 0x6e6953, 2.1));
+  const sun = new THREE.DirectionalLight(0xffe1ae, 2.6);
+  sun.position.set(-45, 62, 32);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.left = -26;
+  sun.shadow.camera.right = 26;
+  sun.shadow.camera.top = 26;
+  sun.shadow.camera.bottom = -26;
+  sun.shadow.camera.near = 1;
+  sun.shadow.camera.far = 180;
+  sun.shadow.bias = -0.00045;
+  scene.add(sun);
+  scene.add(sun.target);
+
+  const mat = (color, roughness = 0.9, metalness = 0) => new THREE.MeshStandardMaterial({ color, roughness, metalness });
+  const earth = mat('#718369');
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 1150), earth);
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -0.04;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Track foundation: a raised, wider ballast shoulder under a subtly lighter crown.
+  const shoulder = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.22, 1000), mat('#77766b'));
+  shoulder.position.set(0, 0.02, 0); shoulder.receiveShadow = true; scene.add(shoulder);
+  const crown = new THREE.Mesh(new THREE.BoxGeometry(3.65, 0.1, 1000), mat('#928d80'));
+  crown.position.y = 0.17; crown.receiveShadow = true; scene.add(crown);
+
+  const timber = mat('#443b32');
+  const sleeperGeo = new THREE.BoxGeometry(2.56, .17, .25);
+  const sleeperCount = 1176;
+  const sleepers = new THREE.InstancedMesh(sleeperGeo, timber, sleeperCount);
+  const dummy = new THREE.Object3D();
+  for(let i = 0;i < sleeperCount;i++){
+    dummy.position.set(0, .28, -499 + i*.85);
+    dummy.rotation.y = Math.sin(i*28.7)*.017;
+    dummy.updateMatrix(); sleepers.setMatrixAt(i, dummy.matrix);
+  }
+  sleepers.instanceMatrix.needsUpdate = true;
+  sleepers.receiveShadow = true;
+  scene.add(sleepers);
+
+  const railMat = mat('#9ca3a4', .35, .75);
+  const railSide = mat('#625f5c', .65, .48);
+  for(const x of [-.7175,.7175]) {
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(.18,.058,1000), railSide);
+    foot.position.set(x,.415,0); scene.add(foot);
+    const web = new THREE.Mesh(new THREE.BoxGeometry(.055,.12,1000), railSide);
+    web.position.set(x,.485,0); scene.add(web);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(.105,.055,1000), railMat);
+    head.position.set(x,.558,0); head.receiveShadow = true; scene.add(head);
+  }
+
+  // Small ballast chips bring depth to the close camera while staying GPU-friendly.
+  let seed = 123454;
+  const rng=()=>((seed=(1664525*seed+1013904223)>>>0)/4294967296);
+  const gritMat = mat('#b0a99a');
+  const grit = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0), gritMat, 6800);
+  for(let i=0;i<6800;i++){
+    const x = (rng()-.5)*6.4;
+    const z = (rng()-.5)*950;
+    const y = Math.abs(x) > 2.65 ? 0.15 : .23;
+    const s = .018+rng()*.06;
+    dummy.position.set(x,y,z); dummy.scale.set(s,s*.52,s*.9); dummy.rotation.set(rng()*3,rng()*3,rng()*3); dummy.updateMatrix(); grit.setMatrixAt(i,dummy.matrix);
+  }
+  grit.instanceMatrix.needsUpdate = true; scene.add(grit);
+
+  // Low grass clumps beyond the ballast. Shapes are instanced for mobile performance.
+  const grass = new THREE.InstancedMesh(new THREE.ConeGeometry(.12,.48,4), mat('#546d46'), 3200);
+  for(let i=0;i<3200;i++){
+    const x = (rng()-.5)*130; const z=(rng()-.5)*1000;
+    if(Math.abs(x)<3.8){dummy.position.set(4+(rng()*6),0,z);}else{dummy.position.set(x,0,z);}
+    const s=.35+rng()*1.4;
+    dummy.scale.set(s,s,s);dummy.rotation.set(0,rng()*Math.PI*2,0);dummy.updateMatrix();grass.setMatrixAt(i,dummy.matrix);
+  }
+  grass.instanceMatrix.needsUpdate=true;scene.add(grass);
+
+  // Pine forest: independent trunks and crowns allow a dense background at low cost.
+  const treeCount=260;
+  const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.11,.2,1,5),mat('#554b3d'),treeCount);
+  const crowns=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,6),mat('#3d5949'),treeCount*2);
+  for(let i=0;i<treeCount;i++){
+    const z=(rng()-.5)*1060;
+    const side=rng()>.5?1:-1;
+    const x=side*(13+rng()*100);
+    const h=5+rng()*10;
+    dummy.position.set(x,h*.33,z);dummy.scale.set(1,h*.66,1);dummy.rotation.set(0,rng()*6,0);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
+    for(let j=0;j<2;j++){
+      const hh=h*(j===0?.46:.37), r=h*(j===0?.22:.17);
+      dummy.position.set(x,h*(j===0?.65:.83),z);
+      dummy.scale.set(r,hh,r);dummy.rotation.set(0,rng()*6,0);dummy.updateMatrix();crowns.setMatrixAt(2*i+j,dummy.matrix);
+    }
+  }
+  trunks.instanceMatrix.needsUpdate = true;
+  crowns.instanceMatrix.needsUpdate = true;
+  scene.add(trunks,crowns);
+
+  // Period railway telegraph line and subtle trackside marker posts.
+  const poleMat = mat('#49473b');
+  const crossMat = mat('#5e5346');
+  for(let z=-468;z<485;z+=48){
+    const p = new THREE.Group();
+    const stick = new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,5.9,7), poleMat);
+    stick.position.y=2.9; p.add(stick);
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(1.5,.12,.15),crossMat);
+    arm.position.y=5.35;p.add(arm);
+    for(const dx of [-.56,0,.56]){
+      const ins = new THREE.Mesh(new THREE.SphereGeometry(.095,7,6),mat('#c5d2c9',.3));
+      ins.position.set(dx,5.48,0);p.add(ins);
+    }
+    p.position.set(-9,0,z);scene.add(p);
+  }
+  // Two modest Polish-style rural stations and water cranes, on the original 3D route.
+  function addStation(z,name,waterCrane=true){
+    const stone=mat('#b2aaa0'),brick=mat('#937567'),roof=mat('#464d44'),iron=mat('#435d5e',.5,.55);
+    const platform=new THREE.Mesh(new THREE.BoxGeometry(2.8,.38,68),stone);platform.position.set(3.4,.33,z);platform.receiveShadow=true;scene.add(platform);
+    const building=new THREE.Mesh(new THREE.BoxGeometry(8,4.3,12),brick);building.position.set(12,2.2,z+13);building.castShadow=true;scene.add(building);
+    const rooftop=new THREE.Mesh(new THREE.ConeGeometry(7,3.4,4),roof);rooftop.rotation.y=Math.PI/4;rooftop.scale.set(1.15,.55,1.7);rooftop.position.set(12,5.35,z+13);scene.add(rooftop);
+    const signCanvas=document.createElement('canvas');signCanvas.width=512;signCanvas.height=128;const ctx=signCanvas.getContext('2d');ctx.fillStyle='#e7e3d2';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#344439';ctx.lineWidth=9;ctx.strokeRect(5,5,502,118);ctx.fillStyle='#25392f';ctx.font='bold 65px Georgia,serif';ctx.textAlign='center';ctx.fillText(name.toUpperCase(),256,88);const tex=new THREE.CanvasTexture(signCanvas);tex.colorSpace=THREE.SRGBColorSpace;
+    const board=new THREE.Mesh(new THREE.PlaneGeometry(4.6,1.15),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));board.position.set(5.2,2.6,z-17);board.rotation.y=-Math.PI/2;scene.add(board);
+    for(const zz of [z-18,z+18]){const lamp=new THREE.Mesh(new THREE.CylinderGeometry(.04,.06,2.0,7),iron);lamp.position.set(4,1.6,zz);scene.add(lamp);}
+    if(waterCrane){const vertical=new THREE.Mesh(new THREE.CylinderGeometry(.14,.17,4.9,10),iron);vertical.position.set(6,2.6,z-22);scene.add(vertical);const arm=new THREE.Mesh(new THREE.BoxGeometry(4.4,.19,.20),iron);arm.position.set(4,4.9,z-22);scene.add(arm);const spout=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.75,8),iron);spout.position.set(1.85,4.5,z-22);scene.add(spout);}
+  }
+  addStation(-70,'Leśna');addStation(-335,'Tartak');
+  return {scene,sun};
+}
+
+// --- locomotive.js ---
+
+// Procedural exterior based on the Parowozownia Wolsztyn Ol49 / 25D49 outline.
+function createLocomotive() {
+  const root = new THREE.Group();
+  root.name = 'Ol49-59 z tendrem 25D49';
+  const M=(c,r=.6,m=.3)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+  const black=M('#171c1b',.51,.48);
+  const blackSoft=M('#262c2a',.78,.18);
+  const soot=M('#101516',.9,.12);
+  const graphite=M('#393f3d',.67,.62);
+  const red=M('#982c2b',.52,.42);
+  const iron=M('#aaa7a0',.36,.82);
+  const rim=M('#ddd1b8',.43,.42);
+  const brass=M('#c69e57',.36,.65);
+  const glass=new THREE.MeshStandardMaterial({color:'#9bb6b3',roughness:.16,metalness:.03,transparent:true,opacity:.35,depthWrite:false,side:THREE.DoubleSide});
+  const coal=M('#17191b',.95,.04);
+  const lampMat=new THREE.MeshStandardMaterial({color:'#ffe5a6',emissive:'#ffcf73',emissiveIntensity:2.0,roughness:.18});
+  const unitY=new THREE.Vector3(0,1,0);
+
+  function mesh(geo,mat,parent=root,x=0,y=0,z=0){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
+  function box(w,h,d,ma,x,y,z,par=root){return mesh(new THREE.BoxGeometry(w,h,d),ma,par,x,y,z);}
+  function cyl(radius,depth,ma,x,y,z,rotX=0,par=root){let o=mesh(new THREE.CylinderGeometry(radius,radius,depth,20),ma,par,x,y,z);o.rotation.x=rotX;return o;}
+  function cz(r,len,ma,x,y,z,par=root){return cyl(r,len,ma,x,y,z,Math.PI/2,par);}
+  function torus(r,tube,ma,x,y,z,alongX=false,par=root){const o=mesh(new THREE.TorusGeometry(r,tube,8,36),ma,par,x,y,z);if(alongX)o.rotation.y=Math.PI/2;return o;}
+  function rod(a,b,r,ma,par=root){const dir=new THREE.Vector3().subVectors(b,a);const o=mesh(new THREE.CylinderGeometry(r,r,dir.length(),8),ma,par);o.position.copy(a).add(b).multiplyScalar(.5);o.quaternion.setFromUnitVectors(unitY,dir.normalize());return o;}
+  function fixedLine(ax,ay,az,bx,by,bz,r,ma){return rod(new THREE.Vector3(ax,ay,az),new THREE.Vector3(bx,by,bz),r,ma);}
+  // Local +Z points towards the tender. All measurements are in metres.
+  const railY=.1805, driverR=.875, driverY=railY+driverR;
+  const boilerY=railY+3.2-.94, stackZ=-4.55;
+  const drivers=[-2.60,-.60,1.40];
+  const steel=M('#71777b',.53,.67), wheelRed=M('#8f2826',.59,.34);
+  const paint=M('#15191b',.39,.40), band=M('#32363a',.45,.49);
+  const boltGeo=new THREE.SphereGeometry(.026,6,4);
+  const bolts=[];
+  function rivet(x,y,z){bolts.push(new THREE.Vector3(x,y,z));}
+  function lathe(points,material,x,y,z,axis='y'){
+    const shape=points.map(([radius,height])=>new THREE.Vector2(radius,height));
+    const o=mesh(new THREE.LatheGeometry(shape,32),material,root,x,y,z);
+    if(axis==='z')o.rotation.x=Math.PI/2;
+    return o;
+  }
+  function barrel(radius,a,b,material){
+    cz(radius,b-a,material,0,boilerY,(a+b)/2);
+  }
+  function plate(label,width,height,x,y,z,yaw){
+    const canvas=document.createElement('canvas');canvas.width=384;canvas.height=128;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#8a2521';ctx.fillRect(0,0,384,128);
+    ctx.strokeStyle='#e9dfc9';ctx.lineWidth=5;ctx.strokeRect(8,8,368,112);
+    ctx.fillStyle='#f4eee0';ctx.font='bold 79px Arial';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,192,67);
+    const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+    const o=mesh(new THREE.PlaneGeometry(width,height),new THREE.MeshBasicMaterial({map:texture}),root,x,y,z);
+    o.rotation.y=yaw;o.castShadow=false;
+  }
+
+  // Engine frame, running boards, smokebox and boiler cladding.
+  for(const side of [-1,1]){
+    box(.19,.38,11.42,soot,side*.47,1.00,-.45);
+    box(.55,.11,8.89,paint,side*1.02,1.94,-1.54);
+    box(.035,.05,8.89,band,side*1.302,1.953,-1.54);
+    box(.27,.33,2.28,soot,side*.96,1.76,2.51);
+  }
+  // Black engine frame with characteristic red lower underframe and walkway trim.
+  for(const side of [-1,1]){
+    box(.105,.18,8.35,red,side*.90,1.02,-1.55);
+    box(.065,.065,8.89,red,side*1.22,1.902,-1.54);
+    for(const z of [-4.25,-2.75,-1.25,.45,1.84]){
+      box(.12,.45,.11,soot,side*.97,.82,z);
+    }
+  }
+  box(2.83,.35,.27,red,0,.99,-6.53);
+  box(2.72,.12,.95,paint,0,1.64,-5.99);
+  box(2.61,.34,.23,soot,0,1.05,5.60);
+  barrel(.94,-5.68,-3.46,paint);
+  barrel(.918,-3.49,2.70,black);
+  for(const z of [-5.65,-3.49,-2.06,-.08,1.81])
+    barrel(z<-3.4?.95:.926,z-.024,z+.024,band);
+  lathe([[0,-.175],[.42,-.157],[.72,-.105],[.855,-.044],[.873,.018],[.873,.047],[0,.047]],paint,0,boilerY,-5.73,'z');
+  for(let i=0;i<24;i++){
+    const a=i*Math.PI/12;
+    rivet(.903*Math.sin(a),boilerY+.903*Math.cos(a),-5.759);
+  }
+  for(const y of [boilerY-.48,boilerY+.49]){
+    box(.26,.072,.047,band,-.50,y,-5.845);
+    cyl(.048,.16,steel,-.66,y,-5.817);
+  }
+  fixedLine(-.20,boilerY,-5.927,.20,boilerY,-5.927,.019,steel);
+  cz(.055,.06,steel,0,boilerY,-5.91);
+  // Circular smokebox-door gasket, sixteen visible studs and twin door hinges.
+  torus(.856,.021,iron,0,boilerY,-5.781);
+  torus(.759,.017,graphite,0,boilerY,-5.813);
+  for(let i=0;i<16;i++){
+    const a=i*Math.PI/8;
+    const stud=mesh(new THREE.SphereGeometry(.042,7,6),iron,root,.833*Math.cos(a),boilerY+.833*Math.sin(a),-5.804);
+    stud.castShadow=false;
+  }
+  for(const dy of [-.31,.29]){
+    box(.29,.088,.14,graphite,.70,boilerY+dy,-5.823);
+    cz(.051,.08,steel,.75,boilerY+dy,-5.91);
+  }
+  cz(.082,.09,iron,0,boilerY,-5.875);
+  fixedLine(-.35,boilerY,-5.882,.35,boilerY,-5.882,.024,iron);
+  plate('Ol49-59',.61,.182,0,boilerY+.39,-5.891,Math.PI);
+
+  // Chimney, steam dome, sandbox and whistle.
+  lathe([[.36,0],[.36,.085],[.29,.17],[.235,.38],[.24,.91],[.28,1.10],[.351,1.208],[.351,1.349],[.264,1.349],[.246,1.223]],soot,0,3.38,stackZ);
+  lathe([[.415,0],[.412,.105],[.295,.185],[.281,.51],[.25,.63],[.14,.688],[0,.70]],paint,0,3.28,-1.90);
+  lathe([[.325,0],[.325,.09],[.256,.15],[.248,.40],[.21,.466],[0,.481]],paint,0,3.28,.55);
+  cyl(.081,.24,brass,-.36,3.65,2.13);
+
+  // Witte-type smoke deflectors: the unmistakable swept sheet-metal plates
+  // on each side of Ol49's smokebox. Their edges rise toward the funnel.
+  // Geometry is a light low-poly approximation, not a measured photogrammetric model.
+  const deflectorMaterial=new THREE.MeshStandardMaterial({color:'#202524',roughness:.76,metalness:.26,side:THREE.DoubleSide});
+  function deflector(side){
+    const outline=[
+      [-5.78,2.99,side*1.075],
+      [-5.76,3.93,side*1.095],
+      [-5.10,4.09,side*1.07],
+      [-3.68,3.95,side*1.11],
+      [-3.55,3.21,side*1.175],
+      [-4.18,2.89,side*1.20]
+    ];
+    const buffer=[];
+    // Winding is mirrored with side; material is double-sided.
+    for(let i=1;i<outline.length-1;i++)for(const k of [0,i,i+1]){
+      const [z,y,x]=outline[k];buffer.push(x,y,z);
+    }
+    const geom=new THREE.BufferGeometry();
+    geom.setAttribute('position',new THREE.Float32BufferAttribute(buffer,3));
+    geom.computeVertexNormals();
+    const plateObj=mesh(geom,deflectorMaterial);plateObj.name='Ol49 wiatrownica '+(side===1?'prawa':'lewa');
+    for(let i=0;i<outline.length;i++){
+      const a=outline[i],b=outline[(i+1)%outline.length];
+      fixedLine(a[2],a[1],a[0],b[2],b[1],b[0],.014,graphite);
+    }
+    // Distinctive narrow forward upper lip and two lower support brackets.
+    fixedLine(side*1.095,4.00,-5.76,side*1.105,4.10,-5.25,.023,soot);
+    for(const z of [-5.06,-4.22]){
+      fixedLine(side*1.14,3.03,z,side*.91,2.51,z+.10,.025,steel);
+    }
+  }
+  deflector(-1);deflector(1);
+  // Steam feed pipes, whistle stand and sandbox delivery pipes.
+  for(const side of [-1,1]){
+    fixedLine(side*.93,boilerY-.29,-4.90,side*1.03,boilerY-.34,-3.14,.051,soot);
+    fixedLine(side*1.03,boilerY-.34,-3.14,side*1.125,1.82,-2.22,.045,soot);
+    fixedLine(side*.63,3.16,-1.84,side*.91,2.89,-1.21,.027,brass);
+    fixedLine(side*.91,2.89,-1.21,side*.99,1.35,-2.02,.024,soot);
+    fixedLine(side*.63,3.14,-1.80,side*.95,2.91,-1.11,.022,iron);
+    // Cab-side compressed-air line and fine longitudinal boiler handrail.
+    fixedLine(side*1.068,2.27,-3.57,side*1.07,2.22,2.39,.021,steel);
+    for(const z of [-3.45,-1.55,.20,1.86])fixedLine(side*1.07,2.22,z,side*1.0,2.23,z,.021,iron);
+  }
+  // Whistle pipes above the firebox.
+  cyl(.057,.21,brass,.32,3.43,2.10);
+  cyl(.032,.32,brass,.32,3.67,2.10);
+  cz(.075,.12,brass,.32,3.71,2.10);
+
+  // Cab and firebox. A shallow arch follows the roof profile.
+  box(2.20,1.59,2.8,blackSoft,0,2.42,2.28);
+  box(2.80,.19,2.88,paint,0,1.80,4.06);
+  const roofProfile=new THREE.Shape();
+  roofProfile.moveTo(-1.535,0);
+  roofProfile.quadraticCurveTo(0,.65,1.535,0);
+  roofProfile.lineTo(1.535,-.075);
+  roofProfile.quadraticCurveTo(0,.54,-1.535,-.075);
+  roofProfile.closePath();
+  mesh(new THREE.ExtrudeGeometry(roofProfile,{depth:2.91,bevelEnabled:false,curveSegments:16}),paint,root,0,3.85,2.63);
+  for(const side of [-1,1]){
+    const x=side*1.381;
+    box(.105,.79,2.72,paint,x,2.26,4.07);
+    box(.105,.19,2.72,paint,x,3.72,4.07);
+    for(const z of [2.78,3.76,4.58,5.36])
+      box(.107,.97,z===3.76?.16:.14,paint,x,3.24,z);
+    for(const [z,w] of [[3.25,.75],[4.17,.64]]){
+      box(.018,.80,w,glass,x-side*.025,3.24,z);
+      for(const y of [2.821,3.659])box(.046,.038,w+.035,band,x+side*.06,y,z);
+      box(.023,.052,w+.04,band,x+side*.06,3.29,z);
+    }
+    plate('Ol49-59',.50,.15,side*1.439,2.51,3.55,side*Math.PI/2);
+    fixedLine(side*1.435,1.76,5.27,side*1.435,3.16,5.27,.022,steel);
+    for(const y of [1.15,1.43,1.71])box(.34,.047,.34,band,side*1.30,y,5.18);
+    for(const z of [-5.1,-3.52,-1.55,.42,2.43])
+      fixedLine(side*.82,boilerY+.37,z,side*.99,boilerY+.37,z,.024,steel);
+    fixedLine(side*.99,boilerY+.37,-5.2,side*.99,boilerY+.37,2.55,.019,steel);
+    fixedLine(side*1.015,2.11,-3.86,side*1.015,2.11,2.48,.045,soot);
+    fixedLine(side*.97,2.22,-.05,side*.97,1.74,2.09,.023,band);
+    for(const z of [-5.96,-4.9,-3.38,2.25,4.97])
+      box(.08,.24,.055,band,side*1.34,1.82,z);
+  }
+
+  // Simplified visible cab interior: boiler backhead, firedoor and small gauges.
+  // Interactive full-size cab instruments are a later milestone.
+  box(1.86,1.56,.17,soot,0,2.53,3.54);
+  cz(.39,.085,graphite,0,2.14,3.414);
+  torus(.355,.021,brass,0,2.14,3.355);
+  for(const x of [-.53,.0,.53]){
+    const dial=cyl(.145,.04,iron,x,3.13,3.39);
+    dial.rotation.x=Math.PI/2;
+    cz(.115,.017,rim,x,3.13,3.348);
+    fixedLine(x-.045,3.13,3.31,x+.045,3.18,3.31,.009,red);
+  }
+  for(const side of [-1,1]){
+    box(.05,.28,.5,steel,side*.56,2.19,4.45);
+    fixedLine(side*.50,2.33,4.34,side*.72,2.56,4.22,.018,brass);
+    for(const z of [3.15,4.14]){
+      box(.083,.04,.35,blackSoft,side*1.39,3.2,z);
+    }
+  }
+  // Roof topvent and drip-rim on the Ol49 cab.
+  box(.81,.14,.52,paint,0,4.25,3.66);
+  box(1.11,.035,.65,iron,0,4.35,3.66);
+  for(const side of [-1,1]){
+    fixedLine(side*1.48,3.85,2.57,side*1.48,3.85,5.47,.022,steel);
+  }
+
+  function lamp(x,y,z,rear=false){
+    const direction=rear?1:-1;
+    cz(.165,.24,paint,x,y,z);
+    torus(.132,.018,band,x,y,z+direction*.126);
+    cz(.121,.018,lampMat,x,y,z+direction*.135);
+    box(.11,.068,.14,soot,x,y-.18,z+.03);
+  }
+  function buffers(z,direction){
+    for(const x of [-1.01,1.01]){
+      cz(.121,.31,soot,x,.99,z-direction*.25);
+      cz(.077,.29,steel,x,.99,z-direction*.16);
+      cz(.18,.05,band,x,.99,z-direction*.025);
+    }
+    box(.21,.19,.37,soot,0,.91,z-direction*.25);
+    const hook=torus(.096,.021,steel,0,.87,z-direction*.135,true);
+    hook.scale.y=1.35;
+    for(const x of [-.59,.59])
+      fixedLine(x,.96,z-direction*.23,x+.09,.63,z-direction*.13,.021,soot);
+  }
+  lamp(-1.11,1.36,-6.45);lamp(1.11,1.36,-6.45);lamp(0,3.10,-5.88);
+  buffers(-7,-1);
+  buffers(13.675,1);
+
+  // 25D49 tender with stepped bunker and two separate bogie frames.
+  const tenderLength=7.10, tenderCenter=9.64;
+  box(2.87,.32,tenderLength,soot,0,.91,tenderCenter);
+  box(2.69,1.36,6.92,paint,0,1.87,tenderCenter);
+  box(2.72,.13,6.93,band,0,2.60,tenderCenter);
+  box(2.80,.25,.18,red,0,.99,13.23);
+  box(2.48,.11,2.59,soot,0,2.68,7.72);
+  for(const side of [-1,1]){
+    box(.12,.47,3.29,paint,side*1.22,2.81,7.86);
+    box(.10,.061,3.33,band,side*1.22,3.056,7.86);
+    for(const y of [1.37,2.46])
+      for(let i=0;i<23;i++)rivet(side*1.350,y,6.35+i*.30);
+    fixedLine(side*1.18,1.28,12.97,side*1.18,2.65,12.97,.022,steel);
+    for(const y of [1.24,1.51,1.78])box(.25,.05,.23,band,side*1.2,y,13.09);
+    for(const z of [8.025,11.175]){
+      box(.17,.32,2.27,soot,side*.93,.70,z);
+      box(.14,.095,1.91,band,side*1.02,.84,z);
+      for(const axleZ of [z-.85,z+.85]){
+        box(.19,.23,.33,blackSoft,side*1.02,.651,axleZ);
+        box(.16,.13,.41,band,side*1.04,.856,axleZ);
+      }
+    }
+  }
+  // Tender 25D49: sloped bunker end caps and seam/stiffener detailing.
+  for(const side of [-1,1]){
+    // Vertical plating stiffeners; repeated geometry shares materials.
+    for(const z of [6.63,7.87,9.19,10.64,12.29]){
+      box(.033,.98,.047,graphite,side*1.364,1.91,z);
+    }
+    // Coal bunker flared rim and characteristic rising front side panels.
+    const verts=[
+      side*1.32,2.56,6.20, side*1.32,3.24,6.34, side*1.32,3.18,8.94,
+      side*1.32,2.56,6.20, side*1.32,3.18,8.94, side*1.32,2.58,9.55,
+    ];
+    const panelGeo=new THREE.BufferGeometry();
+    panelGeo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));panelGeo.computeVertexNormals();
+    mesh(panelGeo,new THREE.MeshStandardMaterial({color:'#171d1d',metalness:.3,roughness:.76,side:THREE.DoubleSide}));
+    fixedLine(side*1.326,3.23,6.34,side*1.326,3.18,8.94,.022,iron);
+    fixedLine(side*1.326,2.58,9.55,side*1.326,2.62,12.90,.021,graphite);
+    // Handhold atop the tender rear corners.
+    fixedLine(side*1.24,2.61,12.96,side*1.24,3.02,12.96,.018,steel);
+  }
+  // Tread surface and hinged water filling lid.
+  box(2.44,.085,1.12,soot,0,2.69,10.98);
+  cyl(.31,.085,graphite,0,2.78,11.07);
+  cyl(.246,.05,soot,0,2.822,11.07);
+  for(const side of [-1,1]){
+    // White depot markings and individually selected identification numbers.
+    const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='rgba(0,0,0,0)';
+    ctx.fillStyle='#e4dfce';ctx.font='bold 94px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('PKP',256,60);
+    const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+    const label=mesh(new THREE.PlaneGeometry(.90,.245),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide}),root,side*1.372,2.20,10.95);
+    label.rotation.y=side*Math.PI/2;label.castShadow=false;
+    plate('25D49',.40,.132,side*1.415,1.77,9.45,side*Math.PI/2);
+  }
+  box(2.49,.43,.11,paint,0,2.80,6.21);
+  box(2.49,.47,.11,paint,0,2.82,9.40);
+  cyl(.28,.13,band,0,2.72,11.04);
+  lamp(-1.08,1.37,13.17,true);lamp(1.08,1.37,13.17,true);
+  fixedLine(0,.91,5.69,0,.91,6.33,.083,band);
+  let seed=719;const rng=()=>((seed=(1664525*seed+1013904223)>>>0)/4294967296);
+  const coalGeo=new THREE.DodecahedronGeometry(1,0);
+  const bunker=new THREE.InstancedMesh(coalGeo,coal,90);
+  const dummy=new THREE.Object3D();
+  for(let i=0;i<90;i++){
+    const size=.08+rng()*.15, x=(rng()-.5)*2.13, z=6.44+rng()*2.75;
+    const heap=Math.max(0,1-Math.hypot(x*.68,(z-7.82)*.62));
+    dummy.position.set(x,2.72+heap*.39+rng()*.08,z);
+    dummy.scale.set(size,size*.7,size);dummy.rotation.set(rng()*3,rng()*3,rng()*3);
+    dummy.updateMatrix();bunker.setMatrixAt(i,dummy.matrix);
+  }
+  bunker.castShadow=true;bunker.receiveShadow=true;root.add(bunker);
+  const fasteners=new THREE.InstancedMesh(boltGeo,band,bolts.length);
+  bolts.forEach((position,i)=>fasteners.setMatrixAt(i,new THREE.Matrix4().makeTranslation(...position)));
+  root.add(fasteners);
+
+  // Wheels roll at their own radii, with the driven cranks quartered.
+  const wheelGroups=[];
+  const rollingTires=new Map();
+  const crank=.319;
+  function wheelset(z,r,kind){
+    const y=railY+r;
+    const driven=kind==='driver';
+    const tireKey=r.toFixed(3);
+    if(!rollingTires.has(tireKey)){
+      const profile=[[r-.068,-.063],[r-.028,-.075],[r+.017,-.075],[r+.017,-.050],[r,-.036],[r,.075],[r-.062,.075],[r-.068,-.063]];
+      rollingTires.set(tireKey,new THREE.LatheGeometry(profile.map(p=>new THREE.Vector2(...p)),32));
+    }
+    const axle=mesh(new THREE.CylinderGeometry(.078,.078,1.45,12),soot,root,0,y,z);
+    axle.rotation.z=Math.PI/2;
+    for(const side of [-1,1]){
+      const pivot=new THREE.Group();pivot.position.set(side*.718,y,z);root.add(pivot);
+      const tire=mesh(rollingTires.get(tireKey),rim,pivot);
+      tire.rotation.z=-side*Math.PI/2;
+      const count=driven?14:8;
+      const spokes=new THREE.InstancedMesh(new THREE.BoxGeometry(.070,r*.74,driven?.065:.046),wheelRed,count);
+      const spoke=new THREE.Object3D();
+      for(let i=0;i<count;i++){
+        const phase=i*Math.PI*2/count;
+        spoke.position.set(0,r*.49*Math.cos(phase),r*.49*Math.sin(phase));
+        spoke.rotation.x=phase;spoke.updateMatrix();spokes.setMatrixAt(i,spoke.matrix);
+      }
+      spokes.castShadow=true;pivot.add(spokes);
+      torus(r-.078,.023,wheelRed,0,0,0,true,pivot);
+      const hub=cyl(r*.19,.161,wheelRed,0,0,0,0,pivot);
+      hub.rotation.z=Math.PI/2;
+      if(driven){
+        const weight=new THREE.RingGeometry(.47,.784,24,1,Math.PI*.20,Math.PI*.60);
+        const o=mesh(weight,wheelRed,pivot,side*.048,0,0);
+        o.rotation.y=side*Math.PI/2;
+        const pin=cyl(.082,.23,steel,side*.155,crank,0,0,pivot);
+        pin.rotation.z=Math.PI/2;
+      }
+      wheelGroups.push({pivot,r,offset:driven&&side===1?Math.PI/2:0});
+    }
+  }
+  wheelset(-5.25,.425,'leading');
+  drivers.forEach(z=>wheelset(z,driverR,'driver'));
+  wheelset(5.0,.425,'trailing');
+  [7.175,8.875,10.325,12.025].forEach(z=>wheelset(z,.45,'tender'));
+
+  const mainLength=3.28,crossY=driverY+.16;
+  const movingRods=[];
+  for(const side of [-1,1]){
+    const x=side*.952;
+    cz(.36,1.34,soot,side*1.106,crossY,-4.61);
+    cz(.373,.09,band,side*1.106,crossY,-5.27);
+    cz(.373,.09,band,side*1.106,crossY,-3.95);
+    cz(.173,1.09,soot,side*1.08,crossY+.43,-4.65);
+    box(.18,.081,.82,steel,x,crossY-.13,-3.84);
+    box(.16,.049,.82,band,x,crossY+.145,-3.84);
+    const coupling=box(.071,.083,4.18,steel,x,driverY,drivers[1]);
+    const crosshead=box(.18,.19,.24,band,x,crossY,-3.88);
+    const main=box(.087,1,.105,steel,x,crossY,-2.5);
+    const piston=cyl(.031,1,steel,x,crossY,-3.9);
+    const valveLink=box(.035,1,.039,steel,side*1.032,crossY+.36,-3);
+    movingRods.push({side,coupling,crosshead,main,piston,valveLink});
+    if(side===1){
+      cz(.11,.40,graphite,1.23,2.09,-4.00);
+      cyl(.16,.53,soot,1.18,2.36,-4.02);
+      cyl(.19,.09,band,1.18,2.65,-4.02);
+      fixedLine(1.18,2.53,-3.94,1.27,2.74,-3.78,.031,soot);
+    }
+  }
+  // Side-valve gear details and lubricator crank hardware (visual approximation).
+  for(const side of [-1,1]){
+    box(.33,.17,.47,graphite,side*1.15,2.14,-3.87);
+    box(.24,.12,.34,soot,side*1.15,2.29,-4.04);
+    for(const z of [-3.71,-3.34,-2.76]){
+      cz(.062,.06,brass,side*1.208,2.21,z);
+    }
+    fixedLine(side*1.018,1.82,-4.95,side*1.019,1.88,-3.93,.03,red);
+    // Brake shoes visible beside each driving wheel.
+    for(const z of drivers){
+      const sh=mesh(new THREE.TorusGeometry(driverR+.035,.048,6,15,Math.PI*.12,Math.PI*.32),soot,root,side*.975,driverY,z);
+      sh.rotation.y=side*Math.PI/2;
+    }
+  }
+  const direction=new THREE.Vector3(), startPoint=new THREE.Vector3(), endPoint=new THREE.Vector3();
+  function span(part,x,ay,az,by,bz){
+    startPoint.set(x,ay,az);endPoint.set(x,by,bz);
+    direction.subVectors(endPoint,startPoint);
+    part.position.copy(startPoint).add(endPoint).multiplyScalar(.5);
+    part.scale.y=direction.length();
+    part.quaternion.setFromUnitVectors(unitY,direction.normalize());
+  }
+  function animateWheels(totalTravelMeters){
+    for(const {pivot,r,offset} of wheelGroups)pivot.rotation.x=-totalTravelMeters/r+offset;
+    for(const {side,coupling,crosshead,main,piston,valveLink} of movingRods){
+      const phase=-totalTravelMeters/driverR+(side===1?Math.PI/2:0);
+      const y=driverY+crank*Math.cos(phase), dz=crank*Math.sin(phase);
+      const mainPinZ=drivers[1]+dz;
+      const crossZ=mainPinZ-Math.sqrt(mainLength**2-(y-crossY)**2);
+      coupling.position.y=y;coupling.position.z=mainPinZ;
+      crosshead.position.z=crossZ;
+      span(main,side*1.02,crossY,crossZ,y,mainPinZ);
+      span(piston,side*.952,crossY,-4.52,crossY,crossZ);
+      span(valveLink,side*1.064,crossY+.43,-4.07+dz*.38,crossY+.13,crossZ+.12);
+    }
+  }
+
+  // Recycled low-poly steam/smoke puffs.
+  const puffGeo=new THREE.IcosahedronGeometry(1,1);
+  const puffs=[];let accumulator=0;
+  function smoke(dt,throttle,speed){
+    accumulator+=dt;
+    const interval=Math.max(.045,.20-throttle*.0009);
+    while(accumulator>interval){
+      accumulator-=interval;
+      const puff=puffs.find(p=>!p.live);
+      if(!puff)break;
+      puff.live=true;puff.life=0;puff.maxLife=2.8+rng()*1.3;
+      puff.mesh.visible=true;
+      const start=new THREE.Vector3((rng()-.5)*.12,4.75,stackZ);
+      root.localToWorld(start);
+      puff.mesh.position.copy(start);
+      puff.mesh.scale.setScalar(.22);
+      puff.mesh.material.opacity=.46;
+      puff.vx=(rng()-.5)*.45;puff.vz=.7+rng()*.45;
+    }
+    for(const p of puffs){if(!p.live)continue;
+      p.life+=dt;
+      p.mesh.position.y+=dt*(.85+p.life*.26);
+      p.mesh.position.x+=dt*p.vx;
+      p.mesh.position.z+=dt*(p.vz+Math.abs(speed)*.065);
+      const scale=.23+p.life*.44;
+      p.mesh.scale.setScalar(scale);
+      p.mesh.material.opacity=.44*Math.pow(Math.max(0,1-p.life/p.maxLife),1.1);
+      if(p.life>p.maxLife){p.mesh.visible=false;p.live=false;}
+    }
+  }
+  // Puff meshes are attached to the world, so smoke stays behind as the locomotive moves.
+  const smokeMeshes = [];
+  for(let i=0;i<62;i++){
+    const ma=new THREE.MeshBasicMaterial({color:i%3===0?'#c3c7c2':'#ebeddf',transparent:true,opacity:0,depthWrite:false});
+    const p=new THREE.Mesh(puffGeo,ma);p.visible=false;p.renderOrder=2;
+    smokeMeshes.push(p);puffs.push({mesh:p,live:false,life:0,maxLife:3,vx:0,vz:0});
+  }
+  return {root,smokeMeshes,animateWheels,smoke};
+}
+
+// --- simulation.js ---
+class Simulation {
+  constructor(){this.reset();}
+  reset(){
+    this.throttle=0;this.brake=.4;this.direction=1;this.speed=0;
+    this.position=155;this.travel=0;this.odometer=0;this.endReached=false;this.time=0;
+    this.pressure=12;this.boilerWater=72;this.tenderWater=85;this.coal=90;this.fire=74;
+    this.fireboxOpen=false;this.injector=false;this.safetyValve=false;this.warning='';
+    this.mission=0;this.stopTimer=0;this.missionEvents=[];this.completed=false;
+  }
+  reverse(){if(Math.abs(this.speed)>.13)return false;this.direction*=-1;return true;}
+  shovel(){if(!this.fireboxOpen)return 'Najpierw otwórz drzwiczki paleniska.';if(this.coal<3)return 'Brak wystarczającej ilości węgla.';this.coal-=3;this.fire=Math.min(100,this.fire+17);return 'Wrzuciłeś węgiel na ruszt. Żar wzrasta.';}
+  fillTender(){if(Math.abs(this.speed)>.30)return 'Najpierw zatrzymaj lokomotywę.';if(!STOPS.some(s=>Math.abs(this.position-s.z)<25))return 'Żuraw wodny jest dostępny tylko przy peronie.';this.tenderWater=Math.min(100,this.tenderWater+45);return 'Uzupełniono wodę w tendrze przy żurawiu.';}
+  serialise(){const out={};for(const k of ['throttle','brake','direction','speed','position','travel','odometer','pressure','boilerWater','tenderWater','coal','fire','fireboxOpen','injector','mission','stopTimer','completed','time'])out[k]=this[k];return out;}
+  restore(data){this.reset();if(!data||typeof data!=='object')return false;const defaults=this.serialise();for(const [k,v] of Object.entries(defaults)){if(typeof v==='boolean'){if(typeof data[k]==='boolean')this[k]=data[k];}else if(Number.isFinite(data[k]))this[k]=data[k];}this.throttle=clamp(this.throttle,0,1);this.brake=clamp(this.brake,0,1);this.position=clamp(this.position,-460,450);this.pressure=clamp(this.pressure,0,16);for(const k of ['boilerWater','tenderWater','coal','fire'])this[k]=clamp(this[k],0,100);this.mission=Math.round(clamp(this.mission,0,STOPS.length));this.direction=this.direction<0?-1:1;return true;}
+  step(dt){
+    dt=clamp(dt,0,.05);this.time+=dt;
+    // Gameplay approximation: heat produces pressure; regulator and injector consume it.
+    this.fire=clamp(this.fire-dt*(this.fireboxOpen?.79:.16),0,100);
+    this.pressure=clamp(this.pressure+dt*(Math.max(0,this.fire-30)*.00275-.02-this.throttle*.117-(this.injector?.042:0)),0,16);
+    this.safetyValve=this.pressure>=14.9;if(this.safetyValve)this.pressure=Math.min(this.pressure,14.9);
+    this.boilerWater=clamp(this.boilerWater-dt*(.008+this.throttle*.039),0,100);
+    if(this.injector&&this.tenderWater>0&&this.pressure>3){this.boilerWater=clamp(this.boilerWater+dt*.75,0,100);this.tenderWater=clamp(this.tenderWater-dt*.48,0,100);}
+    this.warning=this.boilerWater<18?'NISKI POZIOM WODY — ZAMKNIJ REGULATOR':this.pressure<4?'NISKIE CIŚNIENIE PARY':this.safetyValve?'ZAWÓR BEZPIECZEŃSTWA UPUSZCZA PARĘ':'';
+    const power=clamp((this.pressure-2.5)/9.5,0,1)*(this.boilerWater<12?.12:1);
+    const abs=Math.abs(this.speed),drive=this.direction*(1.13*this.throttle*power);
+    const resistance=(.09+.010*abs+2.8*this.brake);
+    if(abs<.025&&Math.abs(drive)<=resistance)this.speed=0;
+    else {const sign=Math.sign(this.speed||drive);this.speed+=(drive-sign*resistance)*dt;if(Math.sign(this.speed)!==sign&&Math.abs(drive)<=resistance)this.speed=0;}
+    this.speed=clamp(this.speed,-12.5,12.5);
+    const proposed=this.position-this.speed*dt;
+    this.endReached=proposed< -460||proposed>450;
+    if(this.endReached){this.position=clamp(proposed,-460,450);this.speed=0;}else this.position=proposed;
+    const ds=this.speed*dt;this.travel+=ds;this.odometer+=Math.abs(ds);
+    if(this.mission<STOPS.length){const stop=STOPS[this.mission];if(Math.abs(this.position-stop.z)<16&&Math.abs(this.speed)<.28){this.stopTimer+=dt;if(this.stopTimer>=1.15){this.mission++;this.stopTimer=0;this.missionEvents.push('Postój '+stop.name+' zaliczony.');if(this.mission===STOPS.length){this.completed=true;this.missionEvents.push('Próba zaliczona! Ukończyłeś przejazd.');}}}else this.stopTimer=0;}
+    return this.speed;
+  }
+}
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const STOPS=[{name:'Leśna',z:-70},{name:'Tartak',z:-335}];
+
+// --- audio.js ---
+// Original procedural sound: no recordings, external sound files, or permissions.
+function createAudio() {
+  let context = null;
+  let enabled = false;
+  let cooldown = 0;
+  let noiseBuffer = null;
+
+  function ensure() {
+    if(!context) {
+      const Ctor=window.AudioContext || window.webkitAudioContext;
+      if(!Ctor) return false;
+      context = new Ctor();
+      const rate=context.sampleRate;
+      noiseBuffer=context.createBuffer(1, Math.ceil(rate*.35), rate);
+      const a=noiseBuffer.getChannelData(0);
+      for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(.8+.2*Math.sin(i*.11));
+    }
+    if(context.state==='suspended')context.resume();
+    return true;
+  }
+  function makeGain(volume){const g=context.createGain();g.gain.value=volume;g.connect(context.destination);return g;}
+  function chuff(speed,throttle) {
+    if(!enabled||!context||!noiseBuffer)return;
+    const t=context.currentTime;
+    const src=context.createBufferSource();src.buffer=noiseBuffer;
+    const filter=context.createBiquadFilter();filter.type='lowpass';filter.frequency.value=350+Math.min(800,speed*30);
+    const gain=makeGain(.0001);
+    src.connect(filter);filter.connect(gain);
+    gain.gain.exponentialRampToValueAtTime(.04+.085*throttle,t+.014);
+    gain.gain.exponentialRampToValueAtTime(.0001,t+.16);
+    src.start(t);src.stop(t+.17);
+  }
+  function tick(dt,speed,throttle){
+    if(!enabled)return;
+    const v=Math.abs(speed);
+    cooldown-=dt;
+    if(v>.28 && throttle>.02 && cooldown<=0){
+      cooldown=Math.max(.11,.8/(1+v*.8));
+      chuff(v,throttle);
+    }
+  }
+  function whistle() {
+    if(!ensure())return;
+    const t=context.currentTime;
+    for(const [freq,vol] of [[540,.055],[685,.028]]){
+      const o=context.createOscillator();o.type='sine';
+      o.frequency.setValueAtTime(freq*.94,t);
+      o.frequency.linearRampToValueAtTime(freq,t+.13);
+      o.frequency.linearRampToValueAtTime(freq*.99,t+.9);
+      const gain=makeGain(.0001);
+      o.connect(gain);
+      gain.gain.exponentialRampToValueAtTime(vol,t+.09);
+      gain.gain.setValueAtTime(vol,t+.63);
+      gain.gain.exponentialRampToValueAtTime(.0001,t+1.05);
+      o.start(t);o.stop(t+1.07);
+    }
+  }
+  function toggle(){enabled=!enabled;if(enabled&&!ensure())enabled=false;return enabled;}
+  return {tick,whistle,toggle,get enabled(){return enabled;}};
+}
+
+// --- main.js ---
+
+
+
+
+
+
+const qs=id=>document.getElementById(id);
+const holder=qs('viewport');
+const renderer = new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, window.innerWidth<800?1.45:1.75));
+renderer.setSize(holder.clientWidth,holder.clientHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.28;
+holder.appendChild(renderer.domElement);
+const {scene,sun}=createRailway();
+const {root,smokeMeshes,animateWheels,smoke}=createLocomotive();
+const sim=new Simulation();
+const audio=createAudio();
+root.position.set(0,.405,sim.position);
+scene.add(root,...smokeMeshes);
+root.updateMatrixWorld(true);
+
+const camera=new THREE.PerspectiveCamera(43,holder.clientWidth/Math.max(1,holder.clientHeight),.10,850);
+camera.position.set(25,10,sim.position-20);
+const orbit=new OrbitControls(camera,renderer.domElement);
+orbit.target.set(0,2.25,sim.position+.7);
+orbit.enableDamping=true;
+orbit.dampingFactor=.065;
+orbit.minDistance=6.5;
+orbit.maxDistance=56;
+orbit.maxPolarAngle=Math.PI*.485;
+orbit.minPolarAngle=.18;
+orbit.enablePan=false;
+orbit.update();
+const cameraPresets=[
+  {name:'PERSPEKTYWA',x:25,y:10,z:-20},
+  {name:'Z BOKU',x:30,y:7,z:2},
+  {name:'CZOŁO',x:1.7,y:6.7,z:-23},
+  {name:'Z GÓRY',x:1,y:31,z:2},
+  {name:'WIĄZARY',x:7.9,y:2.5,z:-1.0},
+  {name:'DYMNICA',x:6.4,y:4.1,z:-11.5}
+];
+let cameraMode=0;
+const toast=qs('toast');let toastTimeout;
+function message(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>toast.classList.remove('show'),2600);}
+qs('camera').addEventListener('click',()=>{
+  cameraMode=(cameraMode+1)%cameraPresets.length;
+  const c=cameraPresets[cameraMode];
+  const focus=new THREE.Vector3(0,2.30,sim.position+.7);
+  camera.position.set(c.x,c.y,sim.position+c.z);
+  orbit.target.copy(focus);orbit.update();
+  message(`KAMERA: ${c.name}`);
+});
+qs('audio').addEventListener('click',()=>{
+  const enabled=audio.toggle();
+  qs('audio').setAttribute('aria-pressed',String(enabled));
+  qs('audio').querySelector('span').textContent=enabled?'GŁOS ON':'DŹWIĘK';
+  message(enabled?'Dźwięk włączony':'Dźwięk wyłączony');
+});
+qs('whistle').addEventListener('click',()=>audio.whistle());
+// Panel kotła is optional: gameplay remains playable with the original two sliders.
+const boilerPanel=qs('boiler-panel'),boilerToggle=qs('boiler-toggle');
+function toggleBoiler(open){boilerPanel.hidden=!open;boilerToggle.setAttribute('aria-expanded',String(open));}
+boilerToggle.addEventListener('click',()=>toggleBoiler(boilerPanel.hidden));
+qs('boiler-close').addEventListener('click',()=>toggleBoiler(false));
+qs('firebox').addEventListener('click',()=>{sim.fireboxOpen=!sim.fireboxOpen;qs('firebox').textContent=sim.fireboxOpen?'Zamknij palenisko':'Otwórz palenisko';qs('firebox').classList.toggle('active',sim.fireboxOpen);message(sim.fireboxOpen?'Drzwiczki paleniska otwarte — uciekające ciepło.':'Palenisko zamknięte.');});
+qs('shovel').addEventListener('click',()=>message(sim.shovel()));
+qs('injector').addEventListener('click',()=>{sim.injector=!sim.injector;qs('injector').textContent='Inżektor: '+(sim.injector?'WŁ.':'WYŁ.');qs('injector').classList.toggle('active',sim.injector);message(sim.injector?'Inżektor pobiera wodę z tendra.':'Inżektor wyłączony.');});
+qs('replenish').addEventListener('click',()=>message(sim.fillTender()));
+const SAVE_KEY='ol49-linia-v03-3d-save';
+qs('save-game').addEventListener('click',()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify(sim.serialise()));message('Przejazd zapisany w tej przeglądarce.');}catch(e){message('Zapis nie jest dostępny w tej przeglądarce.');}});
+function syncControls(){for(const [id,key,label] of [['throttle','throttle','throttle-val'],['brake','brake','brake-val']]){qs(id).value=Math.round(sim[key]*100);qs(label).textContent=qs(id).value+'%';qs(id).style.setProperty('--progress',qs(id).value+'%');}const text=sim.direction===1?'NAPRZÓD':'WSTECZ';qs('reverse-label').textContent=text;qs('direction-label').textContent=text;qs('firebox').textContent=sim.fireboxOpen?'Zamknij palenisko':'Otwórz palenisko';qs('firebox').classList.toggle('active',sim.fireboxOpen);qs('injector').textContent='Inżektor: '+(sim.injector?'WŁ.':'WYŁ.');qs('injector').classList.toggle('active',sim.injector);}
+qs('load-game').addEventListener('click',()=>{try{const raw=localStorage.getItem(SAVE_KEY);if(!raw){message('Brak zapisanego przejazdu.');return;}sim.restore(JSON.parse(raw));syncControls();message('Przejazd wczytany.');}catch(e){message('Nie udało się odczytać zapisu.');}});
+qs('reset-game').addEventListener('click',()=>{sim.reset();syncControls();message('Nowy przejazd rozpoczęty.');});
+function updateBoilerUI(){
+  for(const [id,value,unit] of [['pressure',sim.pressure,'bar'],['water',sim.boilerWater,'%'],['fire',sim.fire,'%'],['tender',sim.tenderWater,'%']]){qs(id+'-readout').textContent=unit==='bar'?value.toFixed(1).replace('.',','):Math.round(value);qs(id+'-meter').value=value;}
+  qs('coal-readout').textContent='Węgiel: '+Math.round(sim.coal)+'%';qs('boiler-warning').textContent=sim.warning||'Utrzymuj ciśnienie i poziom wody.';
+  let station=STOPS[Math.min(sim.mission,STOPS.length-1)];
+  const meters=Math.round(sim.position-station.z);
+  qs('mission-name').textContent=sim.completed?'TRASA UKOŃCZONA':'CEL: '+station.name.toUpperCase();
+  qs('mission-range').textContent=sim.completed?'2 / 2':(meters>=0?meters+' m':'MINIĘTO '+Math.abs(meters)+' m');
+  const start=sim.mission===0?155:STOPS[sim.mission-1].z;
+  qs('mission-fill').style.width=sim.completed?'100%':clamp((start-sim.position)/(start-station.z)*100,0,100)+'%';
+  qs('mission-help').textContent=sim.completed?'Postoje zaliczone. Możesz jechać dalej.':(meters< -16?'Minąłeś peron. Cofnij i zatrzymaj.':Math.abs(meters)<22?'Zatrzymaj lokomotywę przy peronie.':'Zredukuj prędkość przed stacją.');
+}
+
+qs('reverse').addEventListener('click',()=>{
+  if(!sim.reverse()){message('Zatrzymaj parowóz, zanim zmienisz kierunek.');return;}
+  const text=sim.direction===1?'NAPRZÓD':'WSTECZ';
+  qs('reverse-label').textContent=text;
+  qs('direction-label').textContent=text;
+  message(`NAWROTNICA: ${text}`);
+});
+for(const [id,key,label] of [['throttle','throttle','throttle-val'],['brake','brake','brake-val']]){
+  const el=qs(id);const output=qs(label);
+  function changed(){sim[key]=Number(el.value)/100;output.textContent=`${el.value}%`;el.style.setProperty('--progress',`${el.value}%`);}
+  el.addEventListener('input',changed);changed();
+}
+
+function resize(){
+  const w=Math.max(1,holder.clientWidth),h=Math.max(1,holder.clientHeight);
+  camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
+}
+window.addEventListener('resize',resize);
+window.addEventListener('orientationchange',()=>setTimeout(resize,250));
+let last=performance.now(), elapsed=0, lastZ=sim.position, endNotified=false;
+const speedDisplay=qs('speed'),speedBar=qs('speed-fill'),dist=qs('distance'),state=qs('engine-state');
+function frame(now){
+  const dt=Math.min(.045,(now-last)/1000);last=now;elapsed+=dt;
+  sim.step(dt);
+  const dz=sim.position-lastZ;lastZ=sim.position;
+  root.position.z=sim.position;
+  root.updateMatrixWorld(true);
+  animateWheels(sim.travel);
+  smoke(dt,Math.max(sim.throttle*.8,sim.fire*.003),sim.speed);
+  audio.tick(dt,sim.speed,sim.throttle);
+  if(Math.abs(dz)>0){camera.position.z+=dz;orbit.target.z+=dz;}
+  orbit.update();
+  if(sim.endReached && !endNotified){message('Koniec odcinka próbnego. Cofnij parowóz.');endNotified=true;}
+  if(!sim.endReached)endNotified=false;
+  if(sim.missionEvents.length){for(const e of sim.missionEvents.splice(0))message(e);}
+  if(elapsed>.12){updateBoilerUI();elapsed=0;}
+  const kmh=Math.abs(sim.speed)*3.6;
+  speedDisplay.textContent=String(Math.round(kmh)).padStart(2,'0');
+  speedBar.style.width=`${Math.min(100,kmh/45*100)}%`;
+  dist.textContent=`${Math.round(sim.odometer)} m`;
+  state.textContent=kmh<.4?'POSTÓJ':sim.brake>.4?'HAMOWANIE':sim.speed<0?'JAZDA WSTECZ':'JAZDA';
+  // Shadow frustum tracks the locomotive instead of stretching across the full route.
+  sun.position.z=sim.position+28;
+  sun.target.position.z=sim.position;
+  renderer.render(scene,camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+setTimeout(()=>qs('loading')?.classList.add('done'),370);
+setTimeout(()=>qs('loading')?.remove(),1700);
+updateBoilerUI();message('Cel: stacja Leśna. Zwolnij hamulec i otwórz regulator.');
+
+  </script>
+</body>
+</html>
